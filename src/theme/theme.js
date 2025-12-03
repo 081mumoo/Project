@@ -1,0 +1,1 @@
+const theme = { colors: { primary: '#4CAF50', secondary: '#FF5722', background: '#FFFFFF', text: '#000000' }, fonts: { main: 'Arial, sans-serif', heading: 'Georgia, serif' }, spacing: { small: '8px', medium: '16px', large: '32px' } }; export default theme; 

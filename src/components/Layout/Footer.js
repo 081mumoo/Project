@@ -1,0 +1,1 @@
+import React from 'react'; const Footer = () => { return ( <footer style={{ backgroundColor: '#4CAF50', padding: '10px', position: 'fixed', left: '0', bottom: '0', width: '100%' }}> <p style={{ color: 'white' }}>© 2025 Exotic Paws & Claws</p> </footer> ); }; export default Footer; 

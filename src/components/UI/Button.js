@@ -1,0 +1,1 @@
+import styled from 'styled-components'; const Button = styled.button` background-color: ${props => props.primary ? '#4CAF50' : '#FF5722'}; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; &:hover { opacity: 0.8; } `; export default Button; 

@@ -1,0 +1,1 @@
+import React from 'react'; const Header = () => { return ( <header style={{ backgroundColor: '#4CAF50', padding: '10px' }}> <h1 style={{ color: 'white' }}>Exotic Paws & Claws</h1> </header> ); }; export default Header; 

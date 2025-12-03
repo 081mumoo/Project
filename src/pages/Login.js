@@ -1,0 +1,1 @@
+import React from 'react'; const Login = () => { return ( <div> <h2>Login</h2> <form> <Input placeholder='Username' /> <Input placeholder='Password' type='password' /> <Button type='submit'>Login</Button> </form> </div> ); }; export default Login; 

@@ -1,0 +1,1 @@
+import React from 'react'; import GlobalStyle from './theme/GlobalStyle'; import { Header, Footer } from './components/Layout'; import Home from './pages/Home'; const App = () => { return ( <> <GlobalStyle /> <Header /> <Home /> <Footer /> </> ); }; export default App; 

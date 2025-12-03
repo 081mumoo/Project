@@ -1,0 +1,1 @@
+import React from 'react'; const PetProfile = () => { return ( <div> <h2>Pet Profile</h2> <p>Details about your pet will go here.</p> </div> ); }; export default PetProfile; 

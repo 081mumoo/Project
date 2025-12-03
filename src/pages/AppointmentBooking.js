@@ -1,0 +1,1 @@
+import React from 'react'; const AppointmentBooking = () => { return ( <div> <h2>Book an Appointment</h2> <p>Schedule your pet's appointment here.</p> </div> ); }; export default AppointmentBooking; 

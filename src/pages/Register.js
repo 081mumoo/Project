@@ -1,0 +1,1 @@
+import React from 'react'; const Register = () => { return ( <div> <h2>Register</h2> <form> <Input placeholder='Username' /> <Input placeholder='Email' type='email' /> <Input placeholder='Password' type='password' /> <Button type='submit'>Register</Button> </form> </div> ); }; export default Register; 
