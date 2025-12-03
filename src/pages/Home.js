@@ -1,1 +1,0 @@
-import React from 'react'; const Home = () => { return ( <div> <h2>Welcome to Exotic Paws & Claws</h2> <p>Your journey to a pet care platform starts here.</p> </div> ); }; export default Home; 
