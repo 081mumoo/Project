@@ -1,7 +1,7 @@
 -- Basic schema for pet-care-platform
 
-CREATE DATABASE IF NOT EXISTS pet_care_platform;
-USE pet_care_platform;
+CREATE DATABASE IF NOT EXISTS epc;
+USE epc;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
