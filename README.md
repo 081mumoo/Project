@@ -1,4 +1,4 @@
- **`README.md`** file for your **Exotic Paws and Claws** project.
+**`README.md`** file for your **Exotic Paws and Claws** project.
 
 # Exotic Paws and Claws 🐾
 
@@ -245,15 +245,25 @@ exotic-paws/
 
 ## 📸 Screenshots
 
-| Dashboard | Services |
-| :---: | :---: |
-|  |  |
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 33 38 am" src="https://github.com/user-attachments/assets/f593437f-0303-464b-82c5-54545e5f16df" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 38 25 am" src="https://github.com/user-attachments/assets/e2e0d969-84dc-4660-ba30-2faa3b9449be" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 38 31 am" src="https://github.com/user-attachments/assets/4f716f5f-95da-482b-a0d3-edf6da9ac9ad" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 38 37 am" src="https://github.com/user-attachments/assets/3d8794db-099b-45d3-a673-5ab16720d035" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 38 47 am" src="https://github.com/user-attachments/assets/636b9a8a-e942-4f36-bcd3-ea7d61b3fee2" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 38 53 am" src="https://github.com/user-attachments/assets/e596ec5a-5252-42c9-8450-8ee2217b9812" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 38 59 am" src="https://github.com/user-attachments/assets/f70ca825-26d6-4d8a-96fa-9cde684724d5" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 03 am" src="https://github.com/user-attachments/assets/f0a1c14b-330f-4d9d-8f34-589a9ecbaedb" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 07 am" src="https://github.com/user-attachments/assets/0d390892-a3b8-40a4-b554-74d26d6a9701" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 12 am" src="https://github.com/user-attachments/assets/ebbf830e-0f49-4f13-8cfe-9b348ca0bb55" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 16 am" src="https://github.com/user-attachments/assets/486b8560-adaa-4bcf-9463-49430346e507" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 20 am" src="https://github.com/user-attachments/assets/2ec5ae03-87af-414d-82d6-6d5fa9b74e08" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 23 am" src="https://github.com/user-attachments/assets/ea9bbb5f-6cc5-498c-89a4-a78d99a1bbbc" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 34 am" src="https://github.com/user-attachments/assets/7ae17001-37e9-4f57-baca-00692df7d5a8" />
+<img width="1792" height="1052" alt="Screenshot 2025-12-12 at 12 39 40 am" src="https://github.com/user-attachments/assets/f151fc99-1c86-4ba7-a27c-8e823c0b927b" />
 
-| Health Tracker | Pet Shop |
-| :---: | :---: |
-|  |  |
 
------
+
+------
 
 ## 📝 License
 
