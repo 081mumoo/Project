@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Exotic Paws</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'deep-stone': '#B2C5C0', /* YOUR REQUESTED BACKGROUND */
+                        'charcoal': '#2D3748',
+                        'kenya-green': '#006600',
+                        'kenya-red': '#BB0000',
+                        'gold': '#D4AF37',
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Shared Theme Styles */
+        .nav-forest { 
+            background: linear-gradient(90deg, #1F3A2E 0%, #006600 100%); 
+            box-shadow: 0 4px 20px rgba(31, 58, 46, 0.2); 
+        }
+        
+        /* The Deep Stone Background */
+        body { 
+            background-color: #B2C5C0; 
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.3), transparent 60%);
+            min-height: 100vh;
+        }
+        
+        /* Premium Cards */
+        .card-service {
+            background: #FFFFFF; 
+            border-radius: 1.5rem; 
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 15px -3px rgba(31, 58, 46, 0.05); 
+            transition: all 0.3s ease;
+        }
+        .card-service:hover { 
+            transform: translateY(-6px); 
+            box-shadow: 0 20px 30px -5px rgba(31, 58, 46, 0.15); 
+            border-color: white;
+        }
+        
+        /* Status Badges */
+        .status-badge-Pending { background: #FFF7ED; color: #9A3412; border: 1px solid #FFEDD5; }
+        .status-badge-Completed { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+        
+        /* Modal & Form */
+        .modal-glass-panel {
+            background: #FFFFFF;
+            border-radius: 1.5rem;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
+        }
+        .modal-overlay { background: rgba(31, 58, 46, 0.7); backdrop-filter: blur(8px); }
+        .form-input { background: #F8FAFC; border: 1px solid #E2E8F0; transition: 0.2s; }
+        .form-input:focus { background: white; border-color: #1F3A2E; box-shadow: 0 0 0 3px rgba(31, 58, 46, 0.15); }
+        
+        .btn-forest { 
+            background: linear-gradient(135deg, #1F3A2E 0%, #006600 100%); 
+            color: white; 
+            transition: 0.3s; 
+        }
+        .btn-forest:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 102, 0, 0.3); }
+
+        /* Navigation Links Hover */
+        .nav-link { position: relative; opacity: 0.9; transition: 0.3s; }
+        .nav-link:hover { opacity: 1; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 0; background-color: #FFFFFF; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active::after { width: 100%; }
+
+        /* Dropdown */
+        .dropdown-menu { transform-origin: top right; transition: all 0.2s ease-in-out; opacity: 0; transform: scale(0.95) translateY(-10px); pointer-events: none; visibility: hidden; }
+        .dropdown-menu.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; visibility: visible; }
+    </style>
+</head>
+<body class="font-body text-charcoal flex flex-col">
+
+    <nav class="nav-forest sticky top-0 z-50 text-white h-20 flex items-center shadow-lg">
+        <div class="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
+            <a href="home.html" class="font-display text-2xl font-bold tracking-wide">Exotic Paws</a>
+            
+            <div class="hidden xl:flex items-center space-x-8">
+                <a href="home.html" class="nav-link font-medium">Home</a>
+                <a href="services.html" class="nav-link font-bold border-b-2 border-white pb-0.5 active">Services</a>
+                <a href="health.html" class="nav-link font-medium">Health</a>
+                <a href="adoption.html" class="nav-link font-medium">Adopt</a>
+                <a href="shop.html" class="nav-link font-medium">Shop</a>
+                <a href="community.html" class="nav-link font-medium">Community</a>
+                <a href="emergency.html" class="text-red-100 hover:text-white font-bold flex items-center bg-red-600/40 px-4 py-1.5 rounded-full text-xs border border-red-500/50 transition-all hover:bg-red-600">
+                    <span class="mr-1.5 text-lg">🚨</span> Emergency
+                </a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="user-menu-btn" class="flex items-center space-x-3 bg-white/10 border border-white/20 rounded-full py-1.5 pl-2 pr-4 hover:bg-white/20 transition-all shadow-sm group">
+                        <div class="w-9 h-9 bg-white text-forest rounded-full flex items-center justify-center font-bold text-sm shadow-inner" id="user-avatar">U</div>
+                        <div class="text-left hidden sm:block">
+                            <p class="text-xs font-bold text-white/90 uppercase tracking-wide" id="user-name-display">USER</p>
+                        </div>
+                        <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="user-dropdown" class="dropdown-menu absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-charcoal">
+                        <div class="p-5 bg-forest text-white">
+                            <p class="text-lg font-display font-bold" id="dropdown-name">User</p>
+                            <p class="text-xs text-white/60 uppercase tracking-wider mt-1">Pet Parent</p>
+                        </div>
+                        <div class="p-2 border-t border-gray-100 bg-gray-50/50">
+                            <button id="logout-btn" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-bold">
+                                <span class="mr-3 text-lg">🚪</span> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative py-16 text-center animate-fade-in">
+        <div class="max-w-4xl mx-auto px-6">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+                Professional Care
+            </span>
+            <h1 class="font-display text-5xl lg:text-6xl font-bold text-forest mb-6 drop-shadow-sm">Premium Services & Contracts</h1>
+            <p class="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed font-medium">
+                From luxury grooming to custom pet home construction, book professional services tailored to your pet's unique needs.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pb-20 flex-grow">
+        
+        <div id="bookings-section" class="mb-20 hidden animate-slide-up">
+            <div class="flex items-center justify-between mb-8 border-b border-white/30 pb-4">
+                <h2 class="font-display text-3xl font-bold text-forest flex items-center">
+                    <span class="mr-3 text-2xl">📋</span> My Active Contracts
+                </h2>
+                <span class="text-xs font-bold text-forest bg-white px-4 py-1.5 rounded-full shadow-sm">Real-time Status</span>
+            </div>
+            
+            <div id="bookings-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+        </div>
+
+        <div class="mb-20 animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center mb-10">
+                <div class="w-1.5 h-10 bg-kenya-green rounded-full mr-4 shadow-lg"></div>
+                <div>
+                    <h2 class="font-display text-3xl font-bold text-forest">Premium Services</h2>
+                    <p class="text-sm text-charcoal/70 mt-1 font-medium">One-time appointments & wellness</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-service p-8 text-center group cursor-pointer" onclick="openBookingModal('Premium', 'Luxury Grooming')">
+                    <div class="w-20 h-20 bg-purple-50 text-purple-700 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 border border-purple-100 group-hover:scale-110 transition-transform shadow-inner">✂️</div>
+                    <h3 class="font-bold text-xl text-forest mb-2">Luxury Grooming</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Full spa treatment, styling, and hygiene care.</p>
+                    <span class="text-xs font-bold text-purple-700 uppercase tracking-widest border-b-2 border-purple-200 pb-1 group-hover:border-purple-500 transition-colors">Book Now</span>
+                </div>
+
+                <div class="card-service p-8 text-center group cursor-pointer" onclick="openBookingModal('Premium', 'Professional Training')">
+                    <div class="w-20 h-20 bg-blue-50 text-blue-700 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 border border-blue-100 group-hover:scale-110 transition-transform shadow-inner">🎾</div>
+                    <h3 class="font-bold text-xl text-forest mb-2">Training Classes</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Obedience, agility courses, and behavioral correction.</p>
+                    <span class="text-xs font-bold text-blue-700 uppercase tracking-widest border-b-2 border-blue-200 pb-1 group-hover:border-blue-500 transition-colors">Start Now</span>
+                </div>
+
+                <div class="card-service p-8 text-center group cursor-pointer" onclick="openBookingModal('Premium', 'Home Vet Visit')">
+                    <div class="w-20 h-20 bg-emerald-50 text-emerald-700 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 border border-emerald-100 group-hover:scale-110 transition-transform shadow-inner">🩺</div>
+                    <h3 class="font-bold text-xl text-forest mb-2">Home Vet Visit</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Routine checkups in the comfort of your home.</p>
+                    <span class="text-xs font-bold text-emerald-700 uppercase tracking-widest border-b-2 border-emerald-200 pb-1 group-hover:border-emerald-500 transition-colors">Schedule</span>
+                </div>
+
+                <div class="card-service p-8 text-center group cursor-pointer" onclick="openBookingModal('Premium', 'Nutrition Planning')">
+                    <div class="w-20 h-20 bg-pink-50 text-pink-700 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 border border-pink-100 group-hover:scale-110 transition-transform shadow-inner">🥗</div>
+                    <h3 class="font-bold text-xl text-forest mb-2">Nutrition Plan</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Custom diet plans created by certified pet nutritionists.</p>
+                    <span class="text-xs font-bold text-pink-700 uppercase tracking-widest border-b-2 border-pink-200 pb-1 group-hover:border-pink-500 transition-colors">Get Plan</span>
+                </div>
+
+                <div class="card-service p-8 text-center group cursor-pointer" onclick="openBookingModal('Premium', 'Pet Photography')">
+                    <div class="w-20 h-20 bg-amber-50 text-amber-700 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 border border-amber-100 group-hover:scale-110 transition-transform shadow-inner">📸</div>
+                    <h3 class="font-bold text-xl text-forest mb-2">Pet Photography</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Professional studio or outdoor photo sessions.</p>
+                    <span class="text-xs font-bold text-amber-700 uppercase tracking-widest border-b-2 border-amber-200 pb-1 group-hover:border-amber-500 transition-colors">Book Session</span>
+                </div>
+
+                <div class="card-service p-8 text-center group cursor-pointer" onclick="openBookingModal('Premium', 'Insurance Consult')">
+                    <div class="w-20 h-20 bg-indigo-50 text-indigo-700 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 border border-indigo-100 group-hover:scale-110 transition-transform shadow-inner">🛡️</div>
+                    <h3 class="font-bold text-xl text-forest mb-2">Insurance Consult</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Find the best coverage to protect your furry family.</p>
+                    <span class="text-xs font-bold text-indigo-700 uppercase tracking-widest border-b-2 border-indigo-200 pb-1 group-hover:border-indigo-500 transition-colors">Learn More</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center mb-10">
+                <div class="w-1.5 h-10 bg-gold rounded-full mr-4 shadow-lg"></div>
+                <div>
+                    <h2 class="font-display text-3xl font-bold text-forest">Specialized Contracts</h2>
+                    <p class="text-sm text-charcoal/70 mt-1 font-medium">Long-term and manual labor services</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card-service p-8 flex items-start space-x-6 cursor-pointer hover:border-gold/50 group" onclick="openBookingModal('Contract', 'Pet Home Construction')">
+                    <div class="w-24 h-24 bg-orange-50 rounded-3xl flex items-center justify-center text-5xl shrink-0 text-orange-600 border border-orange-100 group-hover:scale-105 transition-transform shadow-inner">🔨</div>
+                    <div>
+                        <h3 class="font-bold text-xl text-forest mb-2">Pet Home Construction</h3>
+                        <p class="text-sm text-gray-600 mb-4 leading-relaxed">Custom kennels, catteries, and aquariums built to your exact specifications.</p>
+                        <span class="text-xs font-bold text-orange-700 bg-orange-100 px-3 py-1 rounded-full uppercase tracking-wide group-hover:bg-orange-200 transition-colors">Request Quote</span>
+                    </div>
+                </div>
+
+                <div class="card-service p-8 flex items-start space-x-6 cursor-pointer hover:border-gold/50 group" onclick="openBookingModal('Contract', 'Pet Transport')">
+                    <div class="w-24 h-24 bg-sky-50 rounded-3xl flex items-center justify-center text-5xl shrink-0 text-sky-600 border border-sky-100 group-hover:scale-105 transition-transform shadow-inner">🚐</div>
+                    <div>
+                        <h3 class="font-bold text-xl text-forest mb-2">Secure Transport</h3>
+                        <p class="text-sm text-gray-600 mb-4 leading-relaxed">Safe, climate-controlled relocation services for moving or vet visits.</p>
+                        <span class="text-xs font-bold text-sky-700 bg-sky-100 px-3 py-1 rounded-full uppercase tracking-wide group-hover:bg-sky-200 transition-colors">Book Ride</span>
+                    </div>
+                </div>
+
+                <div class="card-service p-8 flex items-start space-x-6 cursor-pointer hover:border-gold/50 group" onclick="openBookingModal('Contract', 'Deep Cleaning')">
+                    <div class="w-24 h-24 bg-teal-50 rounded-3xl flex items-center justify-center text-5xl shrink-0 text-teal-600 border border-teal-100 group-hover:scale-105 transition-transform shadow-inner">✨</div>
+                    <div>
+                        <h3 class="font-bold text-xl text-forest mb-2">Habitat Deep Clean</h3>
+                        <p class="text-sm text-gray-600 mb-4 leading-relaxed">Professional sanitation for kennels, cages, and play areas.</p>
+                        <span class="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full uppercase tracking-wide group-hover:bg-teal-200 transition-colors">Schedule Crew</span>
+                    </div>
+                </div>
+
+                <div class="card-service p-8 flex items-start space-x-6 cursor-pointer hover:border-gold/50 group" onclick="openBookingModal('Contract', 'Daily Walking')">
+                    <div class="w-24 h-24 bg-lime-50 rounded-3xl flex items-center justify-center text-5xl shrink-0 text-lime-600 border border-lime-100 group-hover:scale-105 transition-transform shadow-inner">🦮</div>
+                    <div>
+                        <h3 class="font-bold text-xl text-forest mb-2">Daily Walking</h3>
+                        <p class="text-sm text-gray-600 mb-4 leading-relaxed">Recurring walking schedule to keep your dog active while you work.</p>
+                        <span class="text-xs font-bold text-lime-700 bg-lime-100 px-3 py-1 rounded-full uppercase tracking-wide group-hover:bg-lime-200 transition-colors">Subscribe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-forest text-white py-16 border-t border-white/10 mt-auto text-center">
+        <div class="flex justify-center space-x-3 mb-6">
+            <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-lg shadow-lg">🐾</div>
+            <span class="font-display text-2xl font-bold">Exotic Paws</span>
+        </div>
+        <p class="text-white/30 text-xs tracking-widest uppercase">&copy; 2025 Exotic Paws and Claws. All rights reserved.</p>
+    </footer>
+
+    <div id="booking-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-overlay transition-opacity" onclick="closeBookingModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-4">
+            <div class="modal-glass-panel rounded-2xl shadow-2xl overflow-hidden animate-[slideUp_0.4s_ease-out]">
+                <div class="bg-forest px-8 py-6 text-white text-center">
+                    <h3 class="font-display text-2xl font-bold" id="modal-title">Book Service</h3>
+                    <p class="text-white/60 text-xs uppercase tracking-widest mt-1">Confirm your request below</p>
+                </div>
+                
+                <form id="booking-form" class="p-8 space-y-5">
+                    <input type="hidden" id="service-type">
+                    <input type="hidden" id="service-name">
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Select Pet</label>
+                        <select id="b-pet" class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium">
+                            </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Preferred Date</label>
+                        <input type="date" id="b-date" required class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Notes / Requirements</label>
+                        <textarea id="b-notes" rows="3" class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium" placeholder="E.g., Size of kennel, pickup location, specific grooming cut..."></textarea>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeBookingModal()" class="w-1/3 py-3 text-gray-500 font-bold text-xs uppercase tracking-widest hover:text-forest transition-colors">Cancel</button>
+                        <button type="submit" class="w-2/3 btn-forest py-3 rounded-xl font-bold shadow-lg uppercase text-xs tracking-widest hover:bg-kenya-green transition-colors">Confirm Booking</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script>
+        // --- PAGE LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('currentUser')) { window.location.href = 'login.html'; return; }
+            
+            // Hydrate User
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
+            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+            loadBookings();
+            loadPetsIntoDropdown();
+            
+            // Animation
+            anime({ targets: '.animate-fade-in', translateY: [20, 0], opacity: [0, 1], duration: 800, easing: 'easeOutExpo' });
+            anime({ targets: '.animate-slide-up', translateY: [20, 0], opacity: [0, 1], delay: anime.stagger(100), duration: 800, easing: 'easeOutExpo' });
+
+            // Dropdown Logic
+            const menuBtn = document.getElementById('user-menu-btn');
+            const dropdown = document.getElementById('user-dropdown');
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('currentUser'); window.location.href = 'login.html';
+            });
+        });
+
+        // 1. Fetch & Display Bookings
+        async function loadBookings() {
+            const container = document.getElementById('bookings-grid');
+            const section = document.getElementById('bookings-section');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/services', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const bookings = await response.json();
+
+                if (bookings.length > 0) {
+                    section.classList.remove('hidden');
+                    container.innerHTML = bookings.map(b => {
+                        const isPending = b.status === 'Pending';
+                        const actionBtn = isPending ? 
+                            `<button onclick="markComplete(${b.id})" class="text-[10px] font-bold text-white bg-kenya-green px-3 py-1.5 rounded-lg hover:bg-forest transition-colors mt-3 w-full shadow-sm">✓ Mark Done</button>` : 
+                            `<div class="mt-3 flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50 py-1.5 rounded-lg"><span class="mr-1">✓</span> Completed</div>`;
+
+                        return `
+                        <div class="bg-white p-5 rounded-2xl border border-white/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <span class="text-[9px] font-bold uppercase tracking-widest text-gray-400 bg-gray-50 px-2 py-1 rounded">${b.service_type}</span>
+                                    <span class="text-[9px] font-bold px-2 py-1 rounded-full status-badge-${b.status.replace(' ', '-') || 'Pending'} uppercase tracking-wide">${b.status || 'Pending'}</span>
+                                </div>
+                                <h4 class="font-bold text-forest text-lg">${b.service_name}</h4>
+                                <p class="text-xs text-gray-600 mt-1">For: <span class="font-bold text-forest">${b.pet_name || 'General'}</span></p>
+                                <div class="text-xs text-gray-400 mt-2 flex items-center"><span class="mr-1.5">📅</span> ${b.preferred_date ? new Date(b.preferred_date).toLocaleDateString() : 'ASAP'}</div>
+                            </div>
+                            <div class="pt-3 border-t border-gray-100 mt-3">
+                                ${actionBtn}
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+            } catch (err) { console.error("Load error", err); }
+        }
+
+        // 2. Load Pets for Modal
+        async function loadPetsIntoDropdown() {
+            if(!window.database) window.database = new Database();
+            const pets = await window.database.getPets();
+            const select = document.getElementById('b-pet');
+            select.innerHTML = pets.map(p => `<option value="${p.name}">${p.name} (${p.species})</option>`).join('') + '<option value="General">General / No Specific Pet</option>';
+        }
+
+        // 3. Modal Functions
+        function openBookingModal(type, name) {
+            document.getElementById('modal-title').textContent = name;
+            document.getElementById('service-type').value = type;
+            document.getElementById('service-name').value = name;
+            document.getElementById('booking-modal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+        }
+
+        // 4. Handle Submit
+        document.getElementById('booking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = "Booking..."; btn.disabled = true;
+
+            const data = {
+                service_type: document.getElementById('service-type').value,
+                service_name: document.getElementById('service-name').value,
+                pet_name: document.getElementById('b-pet').value,
+                preferred_date: document.getElementById('b-date').value,
+                notes: document.getElementById('b-notes').value
+            };
+
+            try {
+                const res = await fetch('http://localhost:3000/api/services/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    body: JSON.stringify(data)
+                });
+                
+                if(res.ok) {
+                    closeBookingModal();
+                    loadBookings();
+                    e.target.reset();
+                } else {
+                    alert("Booking failed. Please try again.");
+                }
+            } catch (err) { alert("Network error"); }
+            finally {
+                btn.innerText = "Confirm Booking";
+                btn.disabled = false;
+            }
+        });
+
+        // 5. Mark Complete
+        async function markComplete(id) {
+            if(!confirm("Mark this service as completed?")) return;
+            await fetch(`http://localhost:3000/api/services/${id}/complete`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            loadBookings();
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+    </script>
+</body>
+</html>

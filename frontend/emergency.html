@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency - Exotic Paws</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'deep-stone': '#B2C5C0', /* DASHBOARD BACKGROUND */
+                        'charcoal': '#2D3748',
+                        'serene': '#AFD0D5',
+                        'kenya-red': '#BB0000',
+                        'kenya-green': '#006600',
+                        'gold': '#D4AF37',
+                        'alert-red': '#DC2626',
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* FOREST GRADIENT NAVBAR */
+        .nav-forest {
+            background: linear-gradient(90deg, #1F3A2E 0%, #006600 100%);
+            box-shadow: 0 4px 20px rgba(31, 58, 46, 0.2);
+        }
+
+        /* Rich Background */
+        body {
+            background-color: #B2C5C0;
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.4), transparent 70%);
+            min-height: 100vh;
+        }
+
+        /* Emergency Card */
+        .card-emergency {
+            background: #FFFFFF; border-radius: 1.5rem; overflow: hidden;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card-emergency:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 20px 30px rgba(220, 38, 38, 0.15); 
+            border-color: #DC2626;
+        }
+
+        /* Pulse Animation */
+        .pulse-btn { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+
+        /* Dropdown & Nav Link Logic */
+        .dropdown-menu { transform-origin: top right; transition: all 0.2s ease-in-out; opacity: 0; transform: scale(0.95) translateY(-10px); pointer-events: none; visibility: hidden; }
+        .dropdown-menu.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; visibility: visible; }
+        
+        .nav-link { position: relative; opacity: 0.9; transition: 0.3s; }
+        .nav-link:hover { opacity: 1; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #FFFFFF; transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active::after { width: 100%; }
+    </style>
+</head>
+<body class="min-h-screen font-body text-charcoal flex flex-col">
+
+    <nav class="nav-forest sticky top-0 z-50 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="home.html" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20 shadow-lg group-hover:rotate-12 transition-transform">
+                        <span class="text-xl">🐾</span>
+                    </div>
+                    <span class="font-display text-2xl font-bold tracking-wide">Exotic Paws</span>
+                </a>
+
+                <div class="hidden xl:flex items-center space-x-8">
+                    <a href="home.html" class="nav-link font-medium">Home</a>
+                    <a href="services.html" class="nav-link font-medium">Services</a>
+                    <a href="health.html" class="nav-link font-medium">Health</a>
+                    <a href="adoption.html" class="nav-link font-medium">Adopt</a>
+                    <a href="shop.html" class="nav-link font-medium">Shop</a>
+                    <a href="community.html" class="nav-link font-medium">Community</a>
+                    <a href="emergency.html" class="text-white font-bold bg-red-600 px-4 py-1.5 rounded-full text-xs border border-red-400 animate-pulse flex items-center">
+                        <span class="mr-1.5 text-lg">🚨</span> Emergency
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="user-menu-btn" class="flex items-center space-x-3 bg-white/10 border border-white/20 rounded-full py-1.5 pl-2 pr-4 hover:bg-white/20 transition-all shadow-sm group">
+                            <div class="w-9 h-9 bg-white text-forest rounded-full flex items-center justify-center font-bold text-sm shadow-inner" id="user-avatar">U</div>
+                            <div class="text-left hidden sm:block">
+                                <p class="text-xs font-bold text-white/90 uppercase tracking-wide" id="user-name-display">USER</p>
+                            </div>
+                            <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="user-dropdown" class="dropdown-menu absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-charcoal">
+                            <div class="p-5 bg-forest text-white">
+                                <p class="text-lg font-display font-bold" id="dropdown-name">User</p>
+                                <p class="text-xs text-white/60 uppercase tracking-wider mt-1">Pet Parent</p>
+                            </div>
+                            <div class="p-2 border-t border-gray-100 bg-gray-50/50">
+                                <button id="logout-btn" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-bold"><span class="mr-3 text-lg">🚪</span> Sign Out</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow animate-fade-in">
+        
+        <div class="text-center mb-16">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-alert-red/10 border border-alert-red/20 text-alert-red text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+                24/7 Support
+            </span>
+            <h1 class="font-display text-5xl lg:text-6xl font-bold text-forest mb-6">Emergency Assistance</h1>
+            <p class="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed">
+                Immediate veterinary contacts and first aid resources for pet owners in Kenya.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            <div class="card-emergency p-8 text-center group">
+                <div class="w-20 h-20 bg-alert-red text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg pulse-btn">🚑</div>
+                <h3 class="font-display text-2xl font-bold text-forest mb-2">KSPCA Emergency</h3>
+                <p class="text-sm text-gray-500 mb-6">Rescue & Ambulance (Nairobi)</p>
+                <a href="tel:0733571125" class="block w-full py-4 bg-alert-red text-white rounded-xl font-bold shadow-lg hover:bg-red-700 transition-colors">
+                    Call 0733 571 125
+                </a>
+            </div>
+
+            <div class="card-emergency p-8 text-center group">
+                <div class="w-20 h-20 bg-white border-2 border-alert-red text-alert-red rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-md">🏥</div>
+                <h3 class="font-display text-2xl font-bold text-forest mb-2">24/7 Vet (Nairobi)</h3>
+                <p class="text-sm text-gray-500 mb-6">Andys Veterinary Clinic (Lavington)</p>
+                <a href="tel:0722751613" class="block w-full py-4 bg-white border-2 border-alert-red text-alert-red rounded-xl font-bold hover:bg-red-50 transition-colors">
+                    Call 0722 751 613
+                </a>
+            </div>
+
+            <div class="card-emergency p-8 text-center group">
+                <div class="w-20 h-20 bg-white border-2 border-alert-red text-alert-red rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-md">🏖️</div>
+                <h3 class="font-display text-2xl font-bold text-forest mb-2">24/7 Vet (Mombasa)</h3>
+                <p class="text-sm text-gray-500 mb-6">Nyali Veterinary Clinic</p>
+                <a href="tel:0722412896" class="block w-full py-4 bg-white border-2 border-alert-red text-alert-red rounded-xl font-bold hover:bg-red-50 transition-colors">
+                    Call 0722 412 896
+                </a>
+            </div>
+        </div>
+
+        <section class="bg-white rounded-[2rem] p-10 lg:p-16 shadow-xl border border-white/60">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-3xl font-bold text-forest">Quick First Aid Guide</h2>
+                <div class="w-20 h-1.5 bg-kenya-red mx-auto mt-4 rounded-full opacity-30"></div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-deep-stone/30 rounded-2xl border border-gray-200">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl mr-3">🦴</span>
+                        <h3 class="font-bold text-forest text-lg">Choking</h3>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 list-disc ml-4 font-medium">
+                        <li>Check mouth for objects; remove if easy.</li>
+                        <li>Do NOT push object further down.</li>
+                        <li>Perform pet Heimlich if necessary.</li>
+                        <li>Rush to vet immediately.</li>
+                    </ul>
+                </div>
+
+                <div class="p-6 bg-deep-stone/30 rounded-2xl border border-gray-200">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl mr-3">🧪</span>
+                        <h3 class="font-bold text-forest text-lg">Poisoning</h3>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 list-disc ml-4 font-medium">
+                        <li>Identify the toxin if possible.</li>
+                        <li>Do NOT induce vomiting unless told.</li>
+                        <li>Keep packaging/sample of poison.</li>
+                        <li>Call Vet or Poison Control.</li>
+                    </ul>
+                </div>
+
+                <div class="p-6 bg-deep-stone/30 rounded-2xl border border-gray-200">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl mr-3">☀️</span>
+                        <h3 class="font-bold text-forest text-lg">Heatstroke</h3>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 list-disc ml-4 font-medium">
+                        <li>Move to cool, shaded area.</li>
+                        <li>Apply cool (not cold) water to paws/ears.</li>
+                        <li>Offer small amounts of water.</li>
+                        <li>Transport with AC on.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-forest text-white py-16 border-t border-white/10 mt-auto text-center">
+        <div class="flex justify-center space-x-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-lg shadow-lg">🐾</div>
+            <span class="font-display text-2xl font-bold">Exotic Paws</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-8 mb-10 text-sm text-white/60 font-medium">
+            <a href="health.html" class="hover:text-white transition-colors">Health</a>
+            <a href="adoption.html" class="hover:text-white transition-colors">Adopt</a>
+            <a href="shop.html" class="hover:text-white transition-colors">Shop</a>
+        </div>
+        <p class="text-white/30 text-xs tracking-widest uppercase">&copy; 2025 Exotic Paws and Claws.</p>
+    </footer>
+
+    <script src="database.js"></script>
+    <script src="main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) { window.location.href = 'login.html'; return; }
+
+            document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
+            document.getElementById('dropdown-name').textContent = user.name;
+            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+            // Dropdown Logic
+            const menuBtn = document.getElementById('user-menu-btn');
+            const dropdown = document.getElementById('user-dropdown');
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+            document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; });
+
+            // Animation
+            anime({ targets: '.card-emergency', translateY: [20, 0], opacity: [0, 1], delay: anime.stagger(100), duration: 800, easing: 'easeOutExpo' });
+        });
+    </script>
+</body>
+</html>

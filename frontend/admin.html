@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Exotic Paws and Claws</title>
+    <meta name="description" content="Admin dashboard for managing the pet care platform.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'cream': '#F7F5F3',
+                        'charcoal': '#2D3748',
+                        'sage': '#8FA68E',
+                        'coral': '#E8A598',
+                        'gold': '#D4B896',
+                        'kenya-red': '#BB0000',
+                        'kenya-green': '#006600',
+                        'kenya-black': '#000000'
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['Source Code Pro', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #006600, #BB0000);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .dropdown-menu {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(143, 166, 142, 0.2);
+        }
+        
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .admin-gradient {
+            background: linear-gradient(135deg, #1F3A2E 0%, #006600 50%, #BB0000 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(143, 166, 142, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(31, 58, 46, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-cream via-sage/20 to-forest/10">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-sage/20 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center">
+                        <span class="text-white text-lg">🐾</span>
+                    </div>
+                    <span class="font-display text-xl font-semibold text-forest">Exotic Paws and Claws</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="home.html" class="nav-link text-charcoal hover:text-forest font-medium" data-page="home.html">Home</a>
+                    <a href="health.html" class="nav-link text-charcoal hover:text-forest font-medium" data-page="health.html">Health</a>
+                    <a href="adoption.html" class="nav-link text-charcoal hover:text-forest font-medium" data-page="adoption.html">Adopt</a>
+                    <a href="shop.html" class="nav-link text-charcoal hover:text-forest font-medium" data-page="shop.html">Shop</a>
+                    <a href="community.html" class="nav-link text-charcoal hover:text-forest font-medium" data-page="community.html">Community</a>
+                    <a href="emergency.html" class="nav-link text-charcoal hover:text-forest font-medium" data-page="emergency.html">Emergency</a>
+                </div>
+
+                <!-- User Menu & Notifications -->
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="p-2 text-charcoal hover:text-forest transition-colors relative">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H9l-7-7 7-7z"></path>
+                            </svg>
+                            <span id="notification-badge" class="notification-badge absolute -top-1 -right-1 w-5 h-5 bg-kenya-red text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+                        </button>
+                    </div>
+
+                    <!-- User Dropdown -->
+                    <div class="relative">
+                        <button id="user-dropdown-toggle" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-sage/10 transition-colors">
+                            <span class="user-avatar w-8 h-8 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-white font-semibold">👨‍💼</span>
+                            <span class="user-name hidden sm:block text-sm font-medium text-charcoal">Admin</span>
+                            <svg class="w-4 h-4 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="user-dropdown" class="dropdown-menu hidden absolute right-0 mt-2 w-64 rounded-lg shadow-lg py-2 z-50">
+                            <!-- User Info -->
+                            <div class="px-4 py-3 border-b border-sage/20">
+                                <div class="flex items-center space-x-3">
+                                    <span class="user-avatar w-10 h-10 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-white font-semibold text-lg">👨‍💼</span>
+                                    <div>
+                                        <p class="user-name font-semibold text-forest">Admin User</p>
+                                        <p class="text-sm text-charcoal/70">Administrator</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Menu Items -->
+                            <div class="py-2">
+                                <a href="#" class="flex items-center px-4 py-2 text-charcoal hover:bg-sage/10 transition-colors">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Admin Profile
+                                </a>
+                                
+                                <a href="#" class="flex items-center px-4 py-2 text-charcoal hover:bg-sage/10 transition-colors">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    System Settings
+                                </a>
+                                
+                                <div class="border-t border-sage/20 my-2"></div>
+                                
+                                <button id="logout-btn" class="flex items-center w-full px-4 py-2 text-kenya-red hover:bg-kenya-red/10 transition-colors">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button class="p-2 text-charcoal hover:text-forest transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="admin-gradient py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="font-display text-4xl lg:text-6xl font-bold text-white mb-6">Admin Dashboard</h1>
+                <p class="text-xl text-white/80 mb-8 max-w-3xl mx-auto">Manage users, pets, appointments, and system settings for the pet care platform.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="py-20 -mt-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="stat-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-forest mb-2" id="total-users">0</div>
+                    <div class="text-charcoal/70">Total Users</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-forest mb-2" id="total-pets">0</div>
+                    <div class="text-charcoal/70">Registered Pets</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-forest mb-2" id="total-appointments">0</div>
+                    <div class="text-charcoal/70">Appointments</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-forest mb-2" id="total-adoptions">0</div>
+                    <div class="text-charcoal/70">Adoption Applications</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Management Sections -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- User Management -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-6">User Management</h3>
+                    <div class="space-y-4" id="users-list">
+                        <!-- Users will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Pet Management -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-6">Pet Management</h3>
+                    <div class="space-y-4" id="pets-list">
+                        <!-- Pets will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Appointment Management -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-6">Appointment Management</h3>
+                    <div class="space-y-4" id="appointments-list">
+                        <!-- Appointments will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Adoption Applications -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-6">Adoption Applications</h3>
+                    <div class="space-y-4" id="adoptions-list">
+                        <!-- Adoption applications will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Actions -->
+    <section class="py-20 bg-gradient-to-br from-sage/10 to-cream/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-3xl lg:text-4xl font-bold text-forest mb-4">System Actions</h2>
+                <p class="text-xl text-charcoal/70">Manage system-wide settings and data</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl p-6 text-center shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">💾</div>
+                    <h3 class="font-display text-lg font-semibold text-forest mb-2">Backup Database</h3>
+                    <p class="text-charcoal/70 text-sm mb-4">Export all system data</p>
+                    <button class="w-full py-2 px-4 bg-gradient-to-r from-kenya-green to-kenya-red text-white rounded-lg font-medium" onclick="backupDatabase()">
+                        Backup Now
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 text-center shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">📊</div>
+                    <h3 class="font-display text-lg font-semibold text-forest mb-2">System Stats</h3>
+                    <p class="text-charcoal/70 text-sm mb-4">View detailed analytics</p>
+                    <button class="w-full py-2 px-4 bg-gradient-to-r from-kenya-green to-kenya-red text-white rounded-lg font-medium" onclick="showSystemStats()">
+                        View Stats
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 text-center shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">🔄</div>
+                    <h3 class="font-display text-lg font-semibold text-forest mb-2">Reset Demo Data</h3>
+                    <p class="text-charcoal/70 text-sm mb-4">Reset to default state</p>
+                    <button class="w-full py-2 px-4 bg-gradient-to-r from-kenya-green to-kenya-red text-white rounded-lg font-medium" onclick="resetDemoData()">
+                        Reset Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-forest text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center">
+                            <span class="text-white text-lg">🐾</span>
+                        </div>
+                        <span class="font-display text-xl font-semibold">Exotic Paws and Claws</span>
+                    </div>
+                    <p class="text-white/70">Comprehensive pet care platform dedicated to the health and happiness of your beloved companions.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Services</h4>
+                    <ul class="space-y-2 text-white/70">
+                        <li><a href="health.html" class="hover:text-white transition-colors">Health Management</a></li>
+                        <li><a href="adoption.html" class="hover:text-white transition-colors">Pet Adoption</a></li>
+                        <li><a href="shop.html" class="hover:text-white transition-colors">Pet Shop</a></li>
+                        <li><a href="community.html" class="hover:text-white transition-colors">Community</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-white/70">
+                        <li><a href="emergency.html" class="hover:text-white transition-colors">Emergency Help</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white/70 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white/70 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white/70 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/20 mt-8 pt-8 text-center text-white/70">
+                <p>&copy; 2024 Exotic Paws and Claws. All rights reserved. Made with ❤️ for pets and their families.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Database Script -->
+    <script src="database.js"></script>
+    
+    <script>
+        class AdminDashboard {
+            constructor() {
+                this.checkAdminAccess();
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.loadStatistics();
+                this.loadUserData();
+            }
+
+            checkAdminAccess() {
+                const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (user.role !== 'admin') {
+                    window.location.href = 'home.html';
+                }
+            }
+
+            setupEventListeners() {
+                // Logout functionality
+                document.getElementById('logout-btn').addEventListener('click', () => {
+                    this.handleLogout();
+                });
+            }
+
+            loadStatistics() {
+                const stats = window.database.getStatistics();
+                
+                document.getElementById('total-users').textContent = stats.totalUsers;
+                document.getElementById('total-pets').textContent = stats.totalPets;
+                document.getElementById('total-appointments').textContent = stats.totalAppointments;
+                document.getElementById('total-adoptions').textContent = stats.totalAdoptionApplications;
+            }
+
+            loadUserData() {
+                this.loadUsers();
+                this.loadPets();
+                this.loadAppointments();
+                this.loadAdoptionApplications();
+            }
+
+            loadUsers() {
+                const users = window.database.getAllUsers();
+                const usersList = document.getElementById('users-list');
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = '<p class="text-charcoal/70 text-center">No users found</p>';
+                    return;
+                }
+
+                usersList.innerHTML = users.map(user => `
+                    <div class="flex items-center justify-between p-4 bg-sage/5 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">${user.avatar}</span>
+                            <div>
+                                <p class="font-semibold text-forest">${user.name}</p>
+                                <p class="text-sm text-charcoal/70">${user.email}</p>
+                                <p class="text-xs text-charcoal/60">${user.role} • ${new Date(user.createdAt).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="text-kenya-green hover:text-kenya-red transition-colors" onclick="editUser('${user.id}')">
+                                Edit
+                            </button>
+                            ${user.role !== 'admin' ? `
+                                <button class="text-kenya-red hover:text-kenya-green transition-colors" onclick="deleteUser('${user.id}')">
+                                    Delete
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            loadPets() {
+                const pets = window.database.getAllPets();
+                const petsList = document.getElementById('pets-list');
+                
+                if (pets.length === 0) {
+                    petsList.innerHTML = '<p class="text-charcoal/70 text-center">No pets found</p>';
+                    return;
+                }
+
+                petsList.innerHTML = pets.map(pet => `
+                    <div class="flex items-center justify-between p-4 bg-sage/5 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <img src="${pet.profilePicture}" alt="${pet.name}" class="w-12 h-12 rounded-full object-cover">
+                            <div>
+                                <p class="font-semibold text-forest">${pet.name}</p>
+                                <p class="text-sm text-charcoal/70">${pet.breed} • ${pet.age.years}y ${pet.age.months}m</p>
+                                <p class="text-xs text-charcoal/60">${pet.species} • Owner: ${this.getUserName(pet.userId)}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="text-kenya-green hover:text-kenya-red transition-colors" onclick="editPet('${pet.id}')">
+                                Edit
+                            </button>
+                            <button class="text-kenya-red hover:text-kenya-green transition-colors" onclick="deletePet('${pet.id}')">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            loadAppointments() {
+                const appointments = window.database.getAllAppointments();
+                const appointmentsList = document.getElementById('appointments-list');
+                
+                if (appointments.length === 0) {
+                    appointmentsList.innerHTML = '<p class="text-charcoal/70 text-center">No appointments found</p>';
+                    return;
+                }
+
+                appointmentsList.innerHTML = appointments.map(appointment => `
+                    <div class="flex items-center justify-between p-4 bg-sage/5 rounded-lg">
+                        <div>
+                            <p class="font-semibold text-forest">${appointment.service || 'Veterinary Appointment'}</p>
+                            <p class="text-sm text-charcoal/70">${appointment.petName} • ${appointment.date} at ${appointment.time}</p>
+                            <p class="text-xs text-charcoal/60">Owner: ${this.getUserName(appointment.userId)} • Status: ${appointment.status}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 rounded-full text-xs ${appointment.status === 'scheduled' ? 'bg-kenya-green/20 text-kenya-green' : appointment.status === 'completed' ? 'bg-sage/20 text-sage' : 'bg-kenya-red/20 text-kenya-red'}">
+                                ${appointment.status}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            loadAdoptionApplications() {
+                const applications = window.database.getAllAdoptionApplications();
+                const adoptionsList = document.getElementById('adoptions-list');
+                
+                if (applications.length === 0) {
+                    adoptionsList.innerHTML = '<p class="text-charcoal/70 text-center">No adoption applications found</p>';
+                    return;
+                }
+
+                adoptionsList.innerHTML = applications.map(application => `
+                    <div class="flex items-center justify-between p-4 bg-sage/5 rounded-lg">
+                        <div>
+                            <p class="font-semibold text-forest">${application.petName || 'Pet Application'}</p>
+                            <p class="text-sm text-charcoal/70">Applicant: ${this.getUserName(application.userId)}</p>
+                            <p class="text-xs text-charcoal/60">Submitted: ${new Date(application.submittedAt).toLocaleDateString()}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 rounded-full text-xs ${application.status === 'pending' ? 'bg-gold/20 text-gold' : application.status === 'approved' ? 'bg-kenya-green/20 text-kenya-green' : 'bg-kenya-red/20 text-kenya-red'}">
+                                ${application.status}
+                            </span>
+                            ${application.status === 'pending' ? `
+                                <button class="text-kenya-green hover:text-kenya-red transition-colors" onclick="approveAdoption('${application.id}')">
+                                    Approve
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getUserName(userId) {
+                const user = window.database.getUsers().find(u => u.id === userId);
+                return user ? user.name : 'Unknown User';
+            }
+
+            handleLogout() {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Global functions for admin actions
+        function editUser(userId) {
+            alert('Edit user functionality - Coming Soon!');
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                window.database.getUsers().splice(window.database.getUsers().findIndex(u => u.id === userId), 1);
+                localStorage.setItem('users', JSON.stringify(window.database.getUsers()));
+                location.reload();
+            }
+        }
+
+        function editPet(petId) {
+            alert('Edit pet functionality - Coming Soon!');
+        }
+
+        function deletePet(petId) {
+            if (confirm('Are you sure you want to delete this pet?')) {
+                window.database.deletePet(petId);
+                location.reload();
+            }
+        }
+
+        function approveAdoption(applicationId) {
+            if (confirm('Approve this adoption application?')) {
+                const applications = window.database.getAdoptionApplications();
+                const appIndex = applications.findIndex(app => app.id === applicationId);
+                if (appIndex !== -1) {
+                    applications[appIndex].status = 'approved';
+                    window.database.saveAdoptionApplications(applications);
+                    location.reload();
+                }
+            }
+        }
+
+        function backupDatabase() {
+            const backup = window.database.exportDatabase();
+            const backupString = JSON.stringify(backup, null, 2);
+            const blob = new Blob([backupString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pet-care-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showSystemStats() {
+            const stats = window.database.getStatistics();
+            alert(`System Statistics:
+Total Users: ${stats.totalUsers}
+Total Pets: ${stats.totalPets}
+Total Appointments: ${stats.totalAppointments}
+Total Adoption Applications: ${stats.totalAdoptionApplications}`);
+        }
+
+        function resetDemoData() {
+            if (confirm('This will reset all data to default demo state. Are you sure?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Initialize admin dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AdminDashboard();
+        });
+    </script>
+</body>
+</html>

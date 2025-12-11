@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Exotic Paws</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'deep-stone': '#B2C5C0', /* DASHBOARD BACKGROUND */
+                        'charcoal': '#2D3748',
+                        'serene': '#AFD0D5',
+                        'kenya-red': '#BB0000',
+                        'kenya-green': '#006600',
+                        'gold': '#D4AF37',
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Shared Theme Styles */
+        .nav-forest { background: linear-gradient(90deg, #1F3A2E 0%, #006600 100%); box-shadow: 0 4px 20px rgba(31, 58, 46, 0.2); }
+        body { background-color: #B2C5C0; background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.3), transparent 60%); min-height: 100vh; }
+        
+        /* Premium Product Card */
+        .card-product {
+            background: #FFFFFF; border-radius: 1.5rem; overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 15px -3px rgba(31, 58, 46, 0.05); 
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .card-product:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 25px 35px -5px rgba(31, 58, 46, 0.15); 
+            border-color: #1F3A2E;
+        }
+
+        /* Article Card */
+        .card-article {
+            background: #FFFFFF; border-radius: 1.25rem; overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: 0.3s;
+        }
+        .card-article:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(31,58,46,0.1); }
+
+        /* Price Tag & Badges */
+        .price-badge {
+            background: #F0FDF4; color: #166534; 
+            font-family: 'Source Code Pro', monospace;
+            font-weight: 700; font-size: 0.85rem;
+            padding: 0.4rem 0.8rem; border-radius: 0.75rem;
+            border: 1px solid #BBF7D0;
+        }
+        
+        .discount-badge {
+            background: #FEF2F2; color: #991B1B;
+            font-size: 0.65rem; font-weight: 800;
+            padding: 0.25rem 0.5rem; border-radius: 0.5rem;
+            border: 1px solid #FECACA;
+        }
+
+        /* Filter Tabs */
+        .filter-tab { transition: all 0.3s; border: 1px solid transparent; }
+        .filter-tab.active { background: #1F3A2E; color: white; border-color: #1F3A2E; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .filter-tab:hover:not(.active) { background: #E2E8F0; border-color: #CBD5E1; }
+        
+        /* Cart Badge */
+        .cart-count {
+            position: absolute; top: -5px; right: -5px;
+            background: #BB0000; color: white;
+            font-size: 0.6rem; font-weight: bold;
+            width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid #1F3A2E;
+        }
+
+        /* Add Button */
+        .btn-add {
+            background: linear-gradient(135deg, #1F3A2E 0%, #006600 100%);
+            color: white; transition: 0.3s;
+        }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 102, 0, 0.3); }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #1F3A2E; color: white;
+            padding: 1rem 1.5rem; border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100; display: flex; align-items: center; gap: 0.75rem;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Cart Drawer */
+        .cart-drawer {
+            position: fixed; top: 0; right: 0; height: 100vh; width: 400px;
+            background: #FFFFFF; z-index: 100; transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+        }
+        .cart-drawer.open { transform: translateX(0); }
+        .cart-overlay {
+            position: fixed; inset: 0; background: rgba(31, 58, 46, 0.6);
+            backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+        /* Nav Link */
+        .nav-link { position: relative; opacity: 0.9; transition: 0.3s; }
+        .nav-link:hover { opacity: 1; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #FFFFFF; transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active::after { width: 100%; }
+
+        .dropdown-menu { transform-origin: top right; transition: all 0.2s ease-in-out; opacity: 0; transform: scale(0.95) translateY(-10px); pointer-events: none; visibility: hidden; }
+        .dropdown-menu.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; visibility: visible; }
+    </style>
+</head>
+<body class="font-body text-charcoal flex flex-col">
+
+    <nav class="nav-forest sticky top-0 z-50 text-white h-20 flex items-center shadow-lg">
+        <div class="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
+            <a href="home.html" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20 shadow-lg group-hover:rotate-12 transition-transform">
+                    <span class="text-xl">🐾</span>
+                </div>
+                <span class="font-display text-2xl font-bold tracking-wide">Exotic Paws</span>
+            </a>
+
+            <div class="hidden xl:flex items-center space-x-8">
+                <a href="home.html" class="nav-link font-medium">Home</a>
+                <a href="services.html" class="nav-link font-medium">Services</a>
+                <a href="health.html" class="nav-link font-medium">Health</a>
+                <a href="adoption.html" class="nav-link font-medium">Adopt</a>
+                <a href="shop.html" class="nav-link font-bold border-b-2 border-white pb-0.5 active">Shop</a>
+                <a href="community.html" class="nav-link font-medium">Community</a>
+                <a href="emergency.html" class="text-red-100 hover:text-white font-bold flex items-center bg-red-600/40 px-4 py-1.5 rounded-full text-xs border border-red-500/50 transition-all hover:bg-red-600">
+                    <span class="mr-1.5 text-lg">🚨</span> Emergency
+                </a>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <div class="relative cursor-pointer group" onclick="toggleCart()">
+                    <span class="text-2xl opacity-90 group-hover:opacity-100 transition-opacity">🛒</span>
+                    <div id="cart-indicator" class="cart-count hidden">0</div>
+                </div>
+
+                <div class="relative">
+                    <button id="user-menu-btn" class="flex items-center space-x-3 bg-white/10 border border-white/20 rounded-full py-1.5 pl-2 pr-4 hover:bg-white/20 transition-all shadow-sm group">
+                        <div class="w-9 h-9 bg-white text-forest rounded-full flex items-center justify-center font-bold text-sm shadow-inner" id="user-avatar">U</div>
+                        <div class="text-left hidden sm:block">
+                            <p class="text-xs font-bold text-white/90 uppercase tracking-wide" id="user-name-display">USER</p>
+                        </div>
+                        <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="user-dropdown" class="dropdown-menu absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-charcoal">
+                        <div class="p-5 bg-forest text-white">
+                            <p class="text-lg font-display font-bold" id="dropdown-name">User</p>
+                            <p class="text-xs text-white/60 uppercase tracking-wider mt-1">Pet Parent</p>
+                        </div>
+                        <div class="p-2 border-t border-gray-100 bg-gray-50/50">
+                            <button id="logout-btn" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-bold"><span class="mr-3 text-lg">🚪</span> Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative py-16 text-center animate-[fadeIn_0.8s_ease-out]">
+        <div class="max-w-4xl mx-auto px-6">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-forest/10 border border-forest/20 text-forest text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+                Premium Supplies
+            </span>
+            <h1 class="font-display text-5xl lg:text-7xl font-bold text-forest mb-6 drop-shadow-sm">The Pet Shop</h1>
+            <p class="text-lg text-charcoal/80 max-w-2xl mx-auto leading-relaxed mb-8">
+                Curated essentials for your companions. Best local prices, delivered to your door.
+            </p>
+
+            <div class="bg-white p-3 rounded-2xl shadow-xl border border-white max-w-4xl mx-auto flex flex-col md:flex-row gap-3">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Search food, toys, grooming..." 
+                    class="flex-1 px-5 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:border-forest focus:ring-1 focus:ring-forest text-forest placeholder-gray-400 font-medium"
+                >
+                <div class="flex gap-2 p-1 bg-gray-100 rounded-xl overflow-x-auto">
+                    <button class="filter-tab active px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide whitespace-nowrap" onclick="filterProducts('all', this)">All</button>
+                    <button class="filter-tab px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide text-gray-500 whitespace-nowrap" onclick="filterProducts('food', this)">Food</button>
+                    <button class="filter-tab px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide text-gray-500 whitespace-nowrap" onclick="filterProducts('toys', this)">Toys</button>
+                    <button class="filter-tab px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide text-gray-500 whitespace-nowrap" onclick="filterProducts('bundle', this)">Bundles</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pb-24 flex-grow">
+
+        <div id="products-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            </div>
+
+        <section class="mt-24">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-3xl font-bold text-forest">Weekly Specials</h2>
+                <div class="w-16 h-1.5 bg-gold mx-auto mt-4 rounded-full opacity-50"></div>
+            </div>
+            
+            <div class="bg-forest rounded-[2.5rem] p-10 relative overflow-hidden shadow-2xl text-white">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="text-center md:text-left">
+                        <span class="bg-kenya-red text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">Limited Time</span>
+                        <h3 class="font-display text-4xl font-bold mb-2">Bundle & Save</h3>
+                        <p class="text-white/80 max-w-md">Get 20% off when you buy any Bag of Food + Grooming Kit together. Use code <span class="font-bold text-gold">PAWS20</span>.</p>
+                    </div>
+                    <button onclick="filterProducts('bundle', document.querySelector('[onclick*=\'bundle\']'))" class="bg-white text-forest px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-xl hover:-translate-y-1 whitespace-nowrap">
+                        Shop Bundles
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-24">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-3xl font-bold text-forest">Pet Care & Shopping Guides</h2>
+                <p class="text-gray-500 mt-2">Expert advice on choosing the right products.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-article group cursor-pointer">
+                    <div class="h-48 overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-kenya-green uppercase tracking-wide">Nutrition</span>
+                        <h3 class="font-display text-xl font-bold text-forest mt-2 mb-3 group-hover:underline">Choosing the Right Food</h3>
+                        <p class="text-sm text-gray-600 mb-4">Grain-free, dry vs wet? We break down what your pet actually needs.</p>
+                        <span class="text-xs font-bold text-forest uppercase tracking-wide">Read Guide →</span>
+                    </div>
+                </div>
+
+                <div class="card-article group cursor-pointer">
+                    <div class="h-48 overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-kenya-green uppercase tracking-wide">Playtime</span>
+                        <h3 class="font-display text-xl font-bold text-forest mt-2 mb-3 group-hover:underline">Toy Safety 101</h3>
+                        <p class="text-sm text-gray-600 mb-4">How to pick durable, safe toys and avoid choking hazards.</p>
+                        <span class="text-xs font-bold text-forest uppercase tracking-wide">Read Guide →</span>
+                    </div>
+                </div>
+
+                <div class="card-article group cursor-pointer">
+                    <div class="h-48 overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1541781777631-fa95371aad95?auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-kenya-green uppercase tracking-wide">Comfort</span>
+                        <h3 class="font-display text-xl font-bold text-forest mt-2 mb-3 group-hover:underline">The Perfect Bed</h3>
+                        <p class="text-sm text-gray-600 mb-4">Finding the right size and material for your pet's sleeping style.</p>
+                        <span class="text-xs font-bold text-forest uppercase tracking-wide">Read Guide →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-forest text-white py-16 border-t border-white/10 mt-auto text-center">
+        <div class="flex justify-center space-x-3 mb-6">
+            <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-lg shadow-lg">🐾</div>
+            <span class="font-display text-2xl font-bold">Exotic Paws</span>
+        </div>
+        <p class="text-white/30 text-xs tracking-widest uppercase">&copy; 2025 Exotic Paws and Claws. All rights reserved.</p>
+    </footer>
+
+    <div id="toast" class="toast">
+        <div class="w-6 h-6 bg-kenya-green rounded-full flex items-center justify-center text-xs">✓</div>
+        <span class="font-medium text-sm">Added to Cart</span>
+    </div>
+
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+    <div id="cart-drawer" class="cart-drawer flex flex-col">
+        <div class="p-6 bg-forest text-white flex justify-between items-center">
+            <h3 class="font-display text-xl font-bold">Your Cart</h3>
+            <button onclick="toggleCart()" class="text-white/60 hover:text-white">✕</button>
+        </div>
+        <div class="flex-1 p-6 overflow-y-auto" id="cart-items">
+            <div class="text-center text-gray-400 mt-10">Your cart is empty.</div>
+        </div>
+        <div class="p-6 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-600 font-bold">Total</span>
+                <span class="text-xl font-bold text-forest" id="cart-total">KES 0</span>
+            </div>
+            <button class="w-full py-3 bg-forest text-white rounded-xl font-bold shadow-lg hover:bg-kenya-green transition-colors">Checkout</button>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="main.js"></script>
+    <script>
+        // MOCK PRODUCT DATA (Kenyan Context + Bundles)
+        const products = [
+            { id: 1, name: "Premium Dog Food (5kg)", category: "food", price: 2850, oldPrice: 3200, img: "images/dogmeal.png", rating: 4.8 },
+            { id: 2, name: "Cat Litter Box (Large)", category: "accessories", price: 2800, oldPrice: null, img: "images/litterbox.png", rating: 4.5 },
+            { id: 3, name: "Interactive Rope Toy", category: "toys", price: 650, oldPrice: 800, img: "images/rope.png", rating: 4.9 },
+            { id: 4, name: "Grooming Kit Pro", category: "grooming", price: 1800, oldPrice: 2200, img: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=500&q=60", rating: 4.7 },
+            { id: 5, name: "Bird Cage (Medium)", category: "accessories", price: 4500, oldPrice: 5000, img: "images/birdcage.png", rating: 4.6 },
+            { id: 6, name: "Puppy Starter Bundle", category: "bundle", price: 5500, oldPrice: 7000, img: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=500&q=60", rating: 5.0 },
+            { id: 7, name: "Leather Dog Collar", category: "accessories", price: 1200, oldPrice: 1500, img: "images/leatherleash.png", rating: 4.9 },
+            { id: 8, name: "Cat Scratching Post", category: "toys", price: 3500, oldPrice: 4200, img: "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=500&q=60", rating: 4.7 },
+            { id: 9, name: "Wellness Bundle (Vitamins + Food)", category: "bundle", price: 3200, oldPrice: 4000, img: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=500&q=60", rating: 4.9 },
+            { id: 10, name: "Rabbit Pellets (2kg)", category: "food", price: 950, oldPrice: null, img: "images/rabbitfood.png", rating: 4.8 }
+        ];
+
+        let cart = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('currentUser')) { window.location.href = 'login.html'; return; }
+            
+            // Hydrate User
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
+            document.getElementById('dropdown-name').textContent = user.name;
+            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+            renderProducts(products);
+
+            // Search
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+                renderProducts(filtered);
+            });
+
+            // Standard Dropdown & Logout
+            const menuBtn = document.getElementById('user-menu-btn');
+            const dropdown = document.getElementById('user-dropdown');
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+            document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; });
+            
+            anime({ targets: '.animate-fade-in', translateY: [20, 0], opacity: [0, 1], duration: 800, easing: 'easeOutExpo' });
+        });
+
+        function renderProducts(data) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = data.map(product => {
+                const discountBadge = product.oldPrice ? 
+                    `<div class="absolute top-4 right-4 discount-badge">SAVE ${Math.round((1 - product.price/product.oldPrice)*100)}%</div>` : '';
+                
+                const oldPriceDisplay = product.oldPrice ? 
+                    `<span class="text-xs text-gray-400 line-through ml-2">Ksh ${product.oldPrice.toLocaleString()}</span>` : '';
+
+                const bundleBadge = product.category === 'bundle' ? 
+                    `<div class="absolute top-4 left-24 bg-gold text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest shadow-sm">Bundle</div>` : '';
+
+                return `
+                <div class="card-product flex flex-col group">
+                    <div class="h-56 w-full relative overflow-hidden bg-gray-100">
+                        <img src="${product.img}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/90 backdrop-blur text-forest text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">${product.category}</span>
+                        </div>
+                        ${bundleBadge}
+                        ${discountBadge}
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-display font-bold text-lg text-forest leading-tight">${product.name}</h3>
+                            <div class="flex text-gold text-xs">★ ${product.rating}</div>
+                        </div>
+                        
+                        <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                            <div>
+                                <span class="price-badge">Ksh ${product.price.toLocaleString()}</span>
+                                ${oldPriceDisplay}
+                            </div>
+                            <button onclick="addToCart(${product.id})" class="w-10 h-10 rounded-full btn-add flex items-center justify-center shadow-md">
+                                <span class="text-lg">+</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            anime({
+                targets: '.card-product',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(50),
+                duration: 600,
+                easing: 'easeOutExpo'
+            });
+        }
+
+        function filterProducts(category, btn) {
+            document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            
+            if (category === 'all') renderProducts(products);
+            else {
+                const filtered = products.filter(p => p.category === category);
+                renderProducts(filtered);
+                // Scroll to grid if clicked from "Shop Bundles"
+                if(category === 'bundle') document.getElementById('products-grid').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateCartUI();
+            
+            // Toast Notification
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function updateCartUI() {
+            const indicator = document.getElementById('cart-indicator');
+            const itemsContainer = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+
+            indicator.textContent = cart.length;
+            indicator.classList.remove('hidden');
+            indicator.classList.add('scale-125');
+            setTimeout(() => indicator.classList.remove('scale-125'), 200);
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<div class="text-center text-gray-400 mt-10">Your cart is empty.</div>';
+                totalEl.textContent = 'KES 0';
+            } else {
+                let total = 0;
+                itemsContainer.innerHTML = cart.map((item, index) => {
+                    total += item.price;
+                    return `
+                    <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+                        <div>
+                            <p class="font-bold text-sm text-forest">${item.name}</p>
+                            <p class="text-xs text-gray-500">KES ${item.price.toLocaleString()}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 text-xs font-bold hover:underline">Remove</button>
+                    </div>`;
+                }).join('');
+                totalEl.textContent = `KES ${total.toLocaleString()}`;
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-drawer').classList.toggle('open');
+            document.getElementById('cart-overlay').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

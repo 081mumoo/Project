@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health & Wellness - Exotic Paws</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'deep-stone': '#B2C5C0', /* DASHBOARD MATCHING BACKGROUND */
+                        'charcoal': '#2D3748',
+                        'serene': '#AFD0D5',
+                        'kenya-red': '#BB0000',
+                        'kenya-green': '#006600',
+                        'gold': '#D4AF37',
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Shared Theme Styles */
+        .nav-forest { 
+            background: linear-gradient(90deg, #1F3A2E 0%, #006600 100%); 
+            box-shadow: 0 4px 20px rgba(31, 58, 46, 0.2); 
+        }
+        
+        /* The Deep Stone Background */
+        body { 
+            background-color: #B2C5C0; 
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.3), transparent 60%);
+            min-height: 100vh;
+        }
+        
+        /* Premium Cards */
+        .card-premium {
+            background: #FFFFFF; 
+            border-radius: 1.5rem; 
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 15px -3px rgba(31, 58, 46, 0.05); 
+            transition: all 0.3s ease;
+        }
+        .card-premium:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 20px 30px -5px rgba(31, 58, 46, 0.15); 
+        }
+        
+        /* Timeline Styles */
+        .timeline-line {
+            position: absolute; left: 24px; top: 20px; bottom: 0; width: 2px; background: #E5E7EB; z-index: 0;
+        }
+        .timeline-item { position: relative; z-index: 1; }
+        
+        /* Modal & Form */
+        .modal-glass-panel {
+            background: #FFFFFF;
+            border-radius: 1.5rem;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
+        }
+        .modal-overlay { background: rgba(31, 58, 46, 0.7); backdrop-filter: blur(8px); }
+        .form-input { background: #F8FAFC; border: 1px solid #E2E8F0; transition: 0.2s; }
+        .form-input:focus { background: white; border-color: #1F3A2E; box-shadow: 0 0 0 3px rgba(31, 58, 46, 0.15); }
+        
+        .btn-shine { 
+            position: relative; overflow: hidden; 
+            background: linear-gradient(135deg, #1F3A2E 0%, #006600 100%); 
+            color: white; transition: 0.3s; 
+        }
+        .btn-shine:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 102, 0, 0.3); }
+
+        /* Nav Link */
+        .nav-link { position: relative; opacity: 0.9; transition: 0.3s; }
+        .nav-link:hover { opacity: 1; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #FFFFFF; transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active::after { width: 100%; }
+
+        /* Dropdown */
+        .dropdown-menu { transform-origin: top right; transition: all 0.2s ease-in-out; opacity: 0; transform: scale(0.95) translateY(-10px); pointer-events: none; visibility: hidden; }
+        .dropdown-menu.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; visibility: visible; }
+    </style>
+</head>
+<body class="font-body text-charcoal flex flex-col">
+
+    <nav class="nav-forest sticky top-0 z-50 text-white h-20 flex items-center shadow-lg">
+        <div class="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
+            <a href="home.html" class="font-display text-2xl font-bold tracking-wide">Exotic Paws</a>
+            
+            <div class="hidden xl:flex items-center space-x-8">
+                <a href="home.html" class="nav-link font-medium">Home</a>
+                <a href="services.html" class="nav-link font-medium">Services</a>
+                <a href="health.html" class="nav-link font-bold border-b-2 border-white pb-0.5 active">Health</a>
+                <a href="adoption.html" class="nav-link font-medium">Adopt</a>
+                <a href="shop.html" class="nav-link font-medium">Shop</a>
+                <a href="community.html" class="nav-link font-medium">Community</a>
+                <a href="emergency.html" class="text-red-100 hover:text-white font-bold flex items-center bg-red-600/40 px-4 py-1.5 rounded-full text-xs border border-red-500/50 transition-all hover:bg-red-600">
+                    <span class="mr-1.5 text-lg">🚨</span> Emergency
+                </a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="user-menu-btn" class="flex items-center space-x-3 bg-white/10 border border-white/20 rounded-full py-1.5 pl-2 pr-4 hover:bg-white/20 transition-all shadow-sm group">
+                        <div class="w-9 h-9 bg-white text-forest rounded-full flex items-center justify-center font-bold text-sm shadow-inner" id="user-avatar">U</div>
+                        <div class="text-left hidden sm:block">
+                            <p class="text-xs font-bold text-white/90 uppercase tracking-wide" id="user-name-display">USER</p>
+                        </div>
+                        <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="user-dropdown" class="dropdown-menu absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-charcoal">
+                        <div class="p-5 bg-forest text-white">
+                            <p class="text-lg font-display font-bold" id="dropdown-name">User</p>
+                            <p class="text-xs text-white/60 uppercase tracking-wider mt-1">Pet Parent</p>
+                        </div>
+                        <div class="p-2 border-t border-gray-100 bg-gray-50/50">
+                            <button id="logout-btn" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-bold">
+                                <span class="mr-3 text-lg">🚪</span> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 flex-grow animate-fade-in">
+        
+        <div class="flex flex-col md:flex-row justify-between items-end mb-10">
+            <div>
+                <h1 class="font-display text-4xl font-bold text-forest mb-2">Health & Wellness</h1>
+                <p class="text-charcoal/70">Track vitals, medications, and veterinary history.</p>
+            </div>
+            
+            <div class="mt-6 md:mt-0 flex items-center bg-white rounded-xl shadow-lg border border-white/50 p-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-gray-500 mx-4">Viewing:</span>
+                <select id="pet-selector" onchange="loadPetData(this.value)" class="bg-transparent font-bold text-forest text-lg outline-none cursor-pointer pr-8">
+                    <option>Loading pets...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="health-content" class="grid lg:grid-cols-3 gap-8 hidden">
+            
+            <div class="space-y-8">
+                <div class="card-premium p-8 text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-forest/5 to-transparent"></div>
+                    
+                    <div class="w-28 h-28 bg-deep-stone rounded-full flex items-center justify-center text-6xl mx-auto mb-4 border-4 border-white shadow-md relative z-10" id="pet-emoji">
+                        🐾
+                    </div>
+                    
+                    <h2 class="font-display text-3xl font-bold text-forest mb-1 relative z-10" id="pet-name">Luna</h2>
+                    <p class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-6 relative z-10" id="pet-breed">Maine Coon</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 border-t border-gray-100 pt-6">
+                        <div>
+                            <span class="block text-3xl font-bold text-forest" id="pet-age">3</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Years Old</span>
+                        </div>
+                        <div class="border-l border-gray-100">
+                            <span class="block text-3xl font-bold text-forest" id="pet-weight">12.5</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilograms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-premium p-6">
+                    <h3 class="font-bold text-forest mb-4 flex items-center"><span class="mr-2">🛡️</span> Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-xl border border-green-100">
+                            <span class="text-sm font-bold text-green-800">Vaccination</span>
+                            <span class="text-xs font-bold bg-green-200 text-green-800 px-2 py-1 rounded-full" id="status-vac">Up to Date</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-xl border border-blue-100">
+                            <span class="text-sm font-bold text-blue-800">Spayed/Neutered</span>
+                            <span class="text-xs font-bold bg-blue-200 text-blue-800 px-2 py-1 rounded-full" id="status-spay">Yes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="card-premium p-8 h-full">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="font-display text-2xl font-bold text-forest">Medical Timeline</h3>
+                        <div class="flex space-x-2">
+                            <button onclick="openRecordModal('Vaccination')" class="text-xs font-bold bg-forest text-white px-3 py-1.5 rounded-lg hover:bg-kenya-green transition-colors">+ Vaccine</button>
+                            <button onclick="openRecordModal('Vet Visit')" class="text-xs font-bold bg-white border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">+ Visit</button>
+                            <button onclick="openRecordModal('Weight')" class="text-xs font-bold bg-white border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">+ Weight</button>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-2" id="timeline-container">
+                        <div class="timeline-line"></div>
+                        
+                        <div class="text-center py-12 text-gray-400">
+                            <p>Select a pet to view records.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="loading-state" class="py-32 text-center">
+            <div class="w-12 h-12 border-4 border-white border-t-forest rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-forest/60 font-medium">Loading health data...</p>
+        </div>
+
+    </main>
+
+    <div id="record-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-overlay transition-opacity" onclick="closeRecordModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+            <div class="modal-glass-panel rounded-2xl shadow-2xl overflow-hidden animate-[slideUp_0.4s_ease-out]">
+                <div class="bg-forest px-8 py-6 text-white text-center">
+                    <h3 class="font-display text-2xl font-bold" id="modal-title">Add Record</h3>
+                    <p class="text-white/60 text-xs uppercase tracking-widest mt-1">Update Health History</p>
+                </div>
+                
+                <form id="record-form" class="p-8 space-y-5">
+                    <input type="hidden" id="rec-type">
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Title</label>
+                        <input type="text" id="rec-title" required class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium" placeholder="e.g. Rabies Shot">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Date</label>
+                            <input type="date" id="rec-date" required class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Value (Optional)</label>
+                            <input type="text" id="rec-value" class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium" placeholder="e.g. 15kg">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Next Due (Optional)</label>
+                        <input type="date" id="rec-next" class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Notes</label>
+                        <textarea id="rec-notes" rows="2" class="form-input w-full px-4 py-3 rounded-xl outline-none text-forest font-medium" placeholder="Additional details..."></textarea>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeRecordModal()" class="w-1/3 py-3 text-gray-500 font-bold text-xs uppercase tracking-widest hover:text-forest">Cancel</button>
+                        <button type="submit" class="w-2/3 btn-shine py-3 rounded-xl font-bold shadow-lg uppercase text-xs tracking-widest">Save Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script>
+        let petsData = [];
+        let currentPetId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) { window.location.href = 'login.html'; return; }
+
+            // Hydrate User
+            document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
+            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+            // Menu
+            const menuBtn = document.getElementById('user-menu-btn');
+            const dropdown = document.getElementById('user-dropdown');
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('currentUser'); window.location.href = 'login.html';
+            });
+
+            // Initial Data Load
+            try {
+                if(!window.database) window.database = new Database();
+                petsData = await window.database.getPets();
+                
+                const selector = document.getElementById('pet-selector');
+                if (petsData.length === 0) {
+                    selector.innerHTML = '<option>No pets found</option>';
+                    document.getElementById('loading-state').innerHTML = `<p class="text-forest">Please add a pet on the Dashboard first.</p>`;
+                    return;
+                }
+
+                selector.innerHTML = petsData.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                
+                // Load first pet automatically
+                loadPetData(petsData[0].id);
+
+            } catch (err) { console.error(err); }
+        });
+
+        // LOAD DATA FOR SELECTED PET
+        async function loadPetData(petId) {
+            currentPetId = petId;
+            const pet = petsData.find(p => p.id == petId);
+            if (!pet) return;
+
+            // Update UI
+            document.getElementById('pet-name').innerText = pet.name;
+            document.getElementById('pet-breed').innerText = `${pet.breed || 'Unknown'} • ${pet.species}`;
+            document.getElementById('pet-age').innerText = pet.age_years;
+            document.getElementById('pet-weight').innerText = pet.weight;
+            document.getElementById('pet-emoji').innerText = getPetEmoji(pet.species);
+            
+            // Status Badges
+            document.getElementById('status-vac').innerText = pet.vaccinated ? "Up to Date" : "Pending";
+            document.getElementById('status-vac').className = pet.vaccinated 
+                ? "text-xs font-bold bg-green-200 text-green-800 px-2 py-1 rounded-full"
+                : "text-xs font-bold bg-red-100 text-red-800 px-2 py-1 rounded-full";
+                
+            document.getElementById('status-spay').innerText = pet.spayed ? "Yes" : "No";
+
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('health-content').classList.remove('hidden');
+
+            // FETCH RECORDS
+            fetchRecords(petId);
+        }
+
+        async function fetchRecords(petId) {
+            const timeline = document.getElementById('timeline-container');
+            
+            try {
+                const res = await fetch(`http://localhost:3000/api/health/${petId}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const records = await res.json();
+
+                // Rebuild Timeline
+                let html = '<div class="timeline-line"></div>'; // Reset line
+                
+                if (records.length === 0) {
+                    html += `<div class="text-center py-10"><p class="text-gray-400 italic">No medical records yet. Add one above.</p></div>`;
+                } else {
+                    records.forEach(rec => {
+                        const date = new Date(rec.date_recorded).toLocaleDateString();
+                        const icon = getRecordIcon(rec.record_type);
+                        
+                        html += `
+                        <div class="timeline-item flex items-start mb-8 group">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-xl shadow-sm border border-gray-100 z-10 relative mr-4 shrink-0 group-hover:scale-110 transition-transform">
+                                ${icon}
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-white/50 shadow-sm flex-1 hover:shadow-md transition-all">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h4 class="font-bold text-forest text-lg">${rec.title}</h4>
+                                    <span class="text-xs font-bold text-gray-400">${date}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">${rec.notes || rec.value || ''}</p>
+                                <span class="inline-block px-2 py-1 bg-gray-100 text-[10px] font-bold text-gray-500 rounded uppercase tracking-wide">${rec.record_type}</span>
+                            </div>
+                        </div>`;
+                    });
+                }
+                
+                timeline.innerHTML = html;
+                
+                // Animate Items
+                anime({ targets: '.timeline-item', translateX: [-20, 0], opacity: [0, 1], delay: anime.stagger(100), duration: 600, easing: 'easeOutExpo' });
+
+            } catch (err) { console.error(err); }
+        }
+
+        // ADD RECORD
+        document.getElementById('record-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentPetId) return;
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
+            const data = {
+                pet_id: currentPetId,
+                record_type: document.getElementById('rec-type').value,
+                title: document.getElementById('rec-title').value,
+                value: document.getElementById('rec-value').value,
+                date_recorded: document.getElementById('rec-date').value,
+                next_due_date: document.getElementById('rec-next').value || null,
+                notes: document.getElementById('rec-notes').value
+            };
+
+            try {
+                const res = await fetch('http://localhost:3000/api/health/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    closeRecordModal();
+                    fetchRecords(currentPetId);
+                    e.target.reset();
+                }
+            } catch (err) { alert("Error saving record"); }
+            finally { btn.innerText = "Save Record"; btn.disabled = false; }
+        });
+
+        // Helpers
+        function openRecordModal(type) {
+            document.getElementById('modal-title').innerText = `Add ${type}`;
+            document.getElementById('rec-type').value = type;
+            document.getElementById('rec-date').valueAsDate = new Date();
+            document.getElementById('record-modal').classList.remove('hidden');
+        }
+        function closeRecordModal() { document.getElementById('record-modal').classList.add('hidden'); }
+        function getPetEmoji(species) { return { 'Dog': '🐶', 'Cat': '🐱', 'Bird': '🦜', 'Rabbit': '🐰' }[species] || '🐾'; }
+        function getRecordIcon(type) { return { 'Vaccination': '💉', 'Weight': '⚖️', 'Vet Visit': '🏥', 'Medication': '💊' }[type] || '📝'; }
+        function logout() { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pets - Exotic Paws</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'deep-stone': '#B2C5C0',
+                        'kenya-green': '#006600',
+                        'sage': '#8FA68E',
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .nav-forest { background: linear-gradient(90deg, #1F3A2E 0%, #006600 100%); }
+        body { background-color: #B2C5C0; }
+        
+        .card-premium {
+            background: #FFFFFF; 
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 10px 20px -5px rgba(31, 58, 46, 0.05); 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .card-premium:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 25px 30px -5px rgba(31, 58, 46, 0.15); 
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+        .badge-green { background: #E6F4EA; color: #006600; border: 1px solid #CEEAD6; }
+        .badge-gray { background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
+    </style>
+</head>
+<body class="min-h-screen font-body text-gray-800">
+
+    <nav class="nav-forest sticky top-0 z-50 text-white h-20 flex items-center shadow-lg">
+        <div class="max-w-7xl mx-auto w-full px-6 flex justify-between items-center">
+            <a href="home.html" class="font-display text-2xl font-bold tracking-wide">Exotic Paws</a>
+            <div class="flex items-center space-x-6">
+                <a href="home.html" class="text-sm font-bold opacity-80 hover:opacity-100">Dashboard</a>
+                <a href="health.html" class="text-sm font-bold opacity-80 hover:opacity-100">Health</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <div class="flex justify-between items-end mb-10 fade-in">
+            <div>
+                <h1 class="font-display text-4xl font-bold text-forest">My Registered Pets</h1>
+                <p class="text-gray-500 mt-2">Manage profiles and health details.</p>
+            </div>
+            <a href="add-pet-enhanced.html" class="bg-forest text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-kenya-green transition-all transform hover:-translate-y-1 flex items-center">
+                <span class="mr-2 text-xl">+</span> Add New
+            </a>
+        </div>
+
+        <div id="pets-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="col-span-full text-center py-20 text-gray-500">Loading your pets...</div>
+        </div>
+    </main>
+
+    <script src="database.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('pets-grid');
+            
+            // Animation
+            anime({
+                targets: '.fade-in',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
+
+            try {
+                if(!window.database) window.database = new Database();
+                const pets = await window.database.getPets();
+
+                if (pets.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-24 bg-white rounded-[2rem] border-2 border-dashed border-gray-300">
+                            <div class="text-7xl mb-4 opacity-50">🐾</div>
+                            <h3 class="text-2xl font-bold text-forest mb-2">No pets found</h3>
+                            <p class="text-gray-500 mb-6">You haven't registered any pets yet.</p>
+                            <a href="add-pet-enhanced.html" class="text-kenya-green font-bold underline hover:text-forest">Register a Pet Now</a>
+                        </div>`;
+                    return;
+                }
+
+                // RENDER CARDS
+                container.innerHTML = pets.map(pet => {
+                    // Logic for badges
+                    const vaccBadge = pet.vaccinated 
+                        ? `<span class="badge badge-green">Vaccinated</span>` 
+                        : `<span class="badge badge-gray">Vaccination Pending</span>`;
+                    
+                    const spayedBadge = pet.spayed 
+                        ? `<span class="badge badge-green">Spayed/Neutered</span>` 
+                        : ``;
+
+                    // Logic for Image (Use placeholder if no URL)
+                    const imgSrc = pet.photo_url || getPlaceholderImage(pet.species);
+
+                    return `
+                    <div class="card-premium flex flex-col group">
+                        <div class="h-48 w-full bg-gray-100 relative overflow-hidden">
+                            <img src="${imgSrc}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                ${vaccBadge}
+                            </div>
+                        </div>
+
+                        <div class="p-6 flex-1 flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-display font-bold text-2xl text-forest">${pet.name}</h3>
+                                    <p class="text-gray-500 text-sm font-medium uppercase tracking-wide">${pet.breed || pet.species}</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-lg">
+                                    ${getPetEmoji(pet.species)}
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 py-4 border-b border-gray-100 mb-4">
+                                <div class="text-center">
+                                    <span class="block font-bold text-forest text-lg">${pet.age_years}</span>
+                                    <span class="text-[10px] uppercase text-gray-400 font-bold">Years</span>
+                                </div>
+                                <div class="text-center border-l border-r border-gray-100">
+                                    <span class="block font-bold text-forest text-lg">${pet.weight}</span>
+                                    <span class="text-[10px] uppercase text-gray-400 font-bold">Kg</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-forest text-lg">${pet.gender === 'Male' ? '♂' : '♀'}</span>
+                                    <span class="text-[10px] uppercase text-gray-400 font-bold">Sex</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-6 flex-1">
+                                <p class="text-xs font-bold text-gray-400 uppercase mb-1">Medical Notes</p>
+                                <p class="text-sm text-gray-600 line-clamp-2 italic">
+                                    ${pet.medical_notes || "No medical notes added."}
+                                </p>
+                            </div>
+
+                            <div class="flex gap-3 mt-auto">
+                                <button class="flex-1 py-2.5 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors uppercase tracking-wide">Edit Profile</button>
+                                <button class="flex-1 py-2.5 bg-forest text-white rounded-xl text-xs font-bold hover:bg-kenya-green transition-colors uppercase tracking-wide shadow-md">Full Details</button>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Staggered Animation for cards
+                anime({
+                    targets: '.card-premium',
+                    translateY: [20, 0],
+                    opacity: [0, 1],
+                    duration: 600,
+                    delay: anime.stagger(100),
+                    easing: 'easeOutQuart'
+                });
+
+            } catch (error) {
+                container.innerHTML = `<p class="col-span-full text-center text-red-500">Error loading pets.</p>`;
+            }
+        });
+
+        function getPetEmoji(species) {
+            const map = { 'Dog': '🐶', 'Cat': '🐱', 'Bird': '🦜', 'Rabbit': '🐰', 'Fish': '🐠' };
+            return map[species] || '🐾';
+        }
+
+        function getPlaceholderImage(species) {
+            // Fallback visuals if no photo uploaded
+            if(species === 'Cat') return 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&q=60';
+            if(species === 'Bird') return 'https://images.unsplash.com/photo-1552728089-57bdde30ebd1?auto=format&fit=crop&w=500&q=60';
+            return 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=500&q=60'; // Dog default
+        }
+    </script>
+</body>
+</html>

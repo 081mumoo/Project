@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Exotic Paws and Claws</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#1F3A2E',
+                        'deep-stone': '#B2C5C0', /* Requested Darker Rich Background */
+                        'charcoal': '#1F2937',
+                        'serene': '#AFD0D5',
+                        'kenya-red': '#BB0000',
+                        'kenya-green': '#006600',
+                        'gold': '#D4AF37',
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* FOREST GRADIENT NAVBAR */
+        .nav-forest {
+            background: linear-gradient(90deg, #1F3A2E 0%, #005c3b 100%);
+            box-shadow: 0 4px 20px rgba(31, 58, 46, 0.25);
+        }
+
+        /* Rich Darker Background */
+        body {
+            background-color: #B2C5C0;
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.3), transparent 60%);
+            min-height: 100vh;
+        }
+
+        /* Premium Glass Cards */
+        .card-premium {
+            background: #FFFFFF;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 20px -5px rgba(31, 58, 46, 0.1), 0 4px 6px -2px rgba(31, 58, 46, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-premium:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 35px -5px rgba(31, 58, 46, 0.2);
+        }
+
+        /* Button Shine Effect */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1F3A2E 0%, #006600 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.6s;
+        }
+        .btn-shine:hover::after { left: 100%; }
+        .btn-shine:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 0, 0.35);
+        }
+
+        /* Modal Styles */
+        .modal-glass-panel {
+            background: #FFFFFF;
+            border-radius: 1.5rem;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4);
+        }
+        .modal-overlay {
+            background: rgba(31, 58, 46, 0.7); /* Darker overlay */
+            backdrop-filter: blur(8px);
+        }
+
+        /* Form Inputs */
+        .form-input-styled {
+            background-color: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            transition: all 0.2s;
+        }
+        .form-input-styled:focus {
+            background-color: #FFFFFF;
+            border-color: #1F3A2E;
+            box-shadow: 0 0 0 3px rgba(31, 58, 46, 0.2);
+        }
+
+        /* Dropdown Animation */
+        .dropdown-menu {
+            transform-origin: top right;
+            transition: all 0.2s ease-in-out;
+            opacity: 0;
+            transform: scale(0.95) translateY(-10px);
+            pointer-events: none;
+            visibility: hidden;
+        }
+        .dropdown-menu.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        /* Navigation Links Hover */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 0; background-color: #FFFFFF; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+    </style>
+</head>
+<body class="min-h-screen font-body text-charcoal">
+
+    <nav class="nav-forest sticky top-0 z-50 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="home.html" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20 shadow-lg group-hover:rotate-12 transition-transform">
+                        <span class="text-xl">🐾</span>
+                    </div>
+                    <span class="font-display text-2xl font-bold tracking-wide">Exotic Paws</span>
+                </a>
+
+                <div class="hidden xl:flex items-center space-x-8">
+                    <a href="home.html" class="nav-link font-bold text-white border-b-2 border-white pb-0.5">Home</a>
+                    <a href="services.html" class="nav-link text-white/90 hover:text-white transition-colors font-medium">Services</a>
+                    <a href="health.html" class="nav-link text-white/90 hover:text-white transition-colors font-medium">Health</a>
+                    <a href="adoption.html" class="nav-link text-white/90 hover:text-white transition-colors font-medium">Adopt</a>
+                    <a href="shop.html" class="nav-link text-white/90 hover:text-white transition-colors font-medium">Shop</a>
+                    <a href="community.html" class="nav-link text-white/90 hover:text-white transition-colors font-medium">Community</a>
+                    <a href="emergency.html" class="text-red-100 hover:text-white font-bold flex items-center bg-red-600/40 px-4 py-1.5 rounded-full text-xs border border-red-500/50 transition-all hover:bg-red-600">
+                        <span class="mr-1.5 text-lg">🚨</span> Emergency
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="user-menu-btn" class="flex items-center space-x-3 bg-white/10 border border-white/20 rounded-full py-1.5 pl-2 pr-4 hover:bg-white/20 transition-all shadow-sm group">
+                            <div class="w-9 h-9 bg-white text-forest rounded-full flex items-center justify-center font-bold text-sm shadow-inner group-hover:scale-105 transition-transform" id="user-avatar">U</div>
+                            <div class="text-left hidden sm:block">
+                                <p class="text-xs font-bold text-white/90 uppercase tracking-wide" id="user-name-display">GUEST</p>
+                            </div>
+                            <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div id="user-dropdown" class="dropdown-menu absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-charcoal">
+                            <div class="p-5 bg-forest text-white">
+                                <p class="text-lg font-display font-bold" id="dropdown-name">User</p>
+                                <p class="text-xs text-white/60 uppercase tracking-wider mt-1">Pet Parent</p>
+                            </div>
+                            <div class="p-2 space-y-1">
+                                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-600 hover:bg-deep-stone hover:text-forest rounded-xl transition-colors">
+                                    <span class="mr-3 text-lg opacity-70">👤</span> My Profile
+                                </a>
+                                <a href="#" class="flex items-center px-4 py-3 text-sm text-gray-600 hover:bg-deep-stone hover:text-forest rounded-xl transition-colors">
+                                    <span class="mr-3 text-lg opacity-70">⚙️</span> Settings
+                                </a>
+                            </div>
+                            <div class="p-2 border-t border-gray-100 bg-gray-50/50">
+                                <button id="logout-btn" class="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-bold">
+                                    <span class="mr-3 text-lg">🚪</span> Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative overflow-hidden py-12 lg:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <div class="text-center lg:text-left animate-slide-up">
+                    <span class="inline-block py-1.5 px-4 rounded-full bg-forest text-white text-xs font-bold tracking-widest uppercase mb-6 shadow-md border border-white/20">
+                        Pet Care Dashboard
+                    </span>
+                    <h1 class="font-display text-5xl lg:text-6xl font-bold text-forest mb-6 leading-tight drop-shadow-sm">
+                        <span id="dynamic-greeting">Hello</span>, <br>
+                        <span id="hero-user-name" class="text-transparent bg-clip-text bg-gradient-to-r from-forest to-kenya-green">Friend</span>
+                    </h1>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+                        <a href="viewpet.html" class="btn-shine px-8 py-3.5 rounded-xl font-bold text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center">
+                            View My Pets
+                        </a>
+                        <a href="health.html" class="btn-shine px-8 py-3.5 rounded-xl font-bold text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center">
+                            Manage Health
+                        </a>
+                    </div>
+
+                    <p class="text-lg text-charcoal/80 leading-relaxed max-w-lg font-medium mx-auto lg:mx-0">
+                        Your central hub for managing pets, tracking health records, and connecting with our vibrant community.
+                    </p>
+                </div>
+
+                <div class="animate-fade-in hidden lg:block relative" style="animation-delay: 0.2s;">
+                    <div class="absolute -inset-4 bg-white/40 rounded-[2.5rem] rotate-2 backdrop-blur-sm border border-white/50 shadow-lg"></div>
+                    <div id="hero-carousel" class="splide rounded-[2rem] shadow-2xl border-4 border-white relative z-10 overflow-hidden">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide">
+                                    <div class="relative h-80">
+                                        <img src="https://kimi-web-img.moonshot.cn/img/www.dailypaws.com/b68bc9902f47dc70f3ce7e9b91177189f2a29a36.jpg" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-forest/80 via-transparent to-transparent"></div>
+                                        <div class="absolute bottom-8 left-8 text-white">
+                                            <p class="font-display font-bold text-2xl mb-1">Happy & Healthy</p>
+                                            <p class="text-sm text-white/90 font-medium tracking-wide">Track your pet's wellness journey</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="splide__slide">
+                                    <div class="relative h-80">
+                                        <img src="https://kimi-web-img.moonshot.cn/img/d3544la1u8djza.cloudfront.net/acea66805b4b70839102add1ea6f98453f5afaa3.jpg" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-forest/80 via-transparent to-transparent"></div>
+                                        <div class="absolute bottom-8 left-8 text-white">
+                                            <p class="font-display font-bold text-2xl mb-1">Expert Care</p>
+                                            <p class="text-sm text-white/90 font-medium tracking-wide">Professional vet consultation</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-10 -mt-10 relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card-premium p-6 flex items-center space-x-6 animate-slide-up group" style="animation-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl flex items-center justify-center text-3xl shrink-0 text-amber-600 border border-amber-200 shadow-sm">💡</div>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-1.5">Daily Wisdom</p>
+                        <p class="text-forest font-semibold text-sm leading-relaxed typing-cursor" id="daily-tip">Loading insight...</p>
+                    </div>
+                </div>
+                <div class="card-premium p-6 flex items-center space-x-6 animate-slide-up group" style="animation-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl flex items-center justify-center text-3xl shrink-0 text-emerald-600 border border-emerald-200 shadow-sm">📅</div>
+                    <div class="flex-1">
+                        <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-1.5">Up Next</p>
+                        <h3 class="font-bold text-forest text-base" id="next-appt-title">No upcoming visits</h3>
+                        <p class="text-xs text-gray-500 font-medium mt-0.5" id="next-appt-date">Your schedule is clear</p>
+                    </div>
+                    <a href="health.html" class="px-5 py-2.5 bg-gray-50 border border-gray-200 text-xs font-bold text-forest rounded-xl hover:bg-forest hover:text-white transition-all shadow-sm">View</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="my-pets-container" class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="font-display text-3xl font-bold text-forest">My Companions</h2>
+                    <div class="h-1.5 w-20 bg-forest mt-2 rounded-full opacity-30"></div>
+                </div>
+                <a id="add-another-btn" href="add-pet-enhanced.html" class="hidden btn-shine px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg text-sm flex items-center justify-center text-white">+ Add Another</a>
+            </div>
+
+            <div id="pets-grid-content">
+                <div class="py-16 text-center">
+                    <div class="w-10 h-10 border-4 border-white border-t-forest rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-forest font-medium text-sm tracking-wide opacity-60">SYNCING DATA...</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card-premium p-6 text-center group hover:bg-forest transition-colors duration-300">
+                    <div class="text-3xl font-bold text-forest mb-2 group-hover:text-white">1,234</div>
+                    <div class="text-gray-500 text-xs font-bold uppercase tracking-wide group-hover:text-white/70">Pets Adopted</div>
+                </div>
+                <div class="card-premium p-6 text-center group hover:bg-forest transition-colors duration-300">
+                    <div class="text-3xl font-bold text-forest mb-2 group-hover:text-white">567</div>
+                    <div class="text-gray-500 text-xs font-bold uppercase tracking-wide group-hover:text-white/70">Health Records</div>
+                </div>
+                <div class="card-premium p-6 text-center group hover:bg-forest transition-colors duration-300">
+                    <div class="text-3xl font-bold text-forest mb-2 group-hover:text-white">89</div>
+                    <div class="text-gray-500 text-xs font-bold uppercase tracking-wide group-hover:text-white/70">Veterinarians</div>
+                </div>
+                <div class="card-premium p-6 text-center group hover:bg-forest transition-colors duration-300">
+                    <div class="text-3xl font-bold text-forest mb-2 group-hover:text-white">4.9</div>
+                    <div class="text-gray-500 text-xs font-bold uppercase tracking-wide group-hover:text-white/70">User Rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white/40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl font-bold text-forest mb-4">Everything Your Pet Needs</h2>
+                <p class="text-charcoal/80 max-w-2xl mx-auto text-lg">Comprehensive solutions for every stage of your pet care journey.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card-premium p-8 cursor-pointer group" onclick="window.location.href='health.html'">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl mb-6 text-emerald-600 border border-emerald-100 group-hover:scale-110 transition-transform shadow-sm">🏥</div>
+                    <h3 class="font-bold text-forest text-xl mb-3">Health Management</h3>
+                    <p class="text-sm text-charcoal/70 mb-6 leading-relaxed font-medium">Track vaccinations, appointments, and maintain comprehensive records.</p>
+                    <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide group-hover:underline">Manage Health →</span>
+                </div>
+
+                <div class="card-premium p-8 cursor-pointer group" onclick="window.location.href='adoption.html'">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mb-6 text-blue-600 border border-blue-100 group-hover:scale-110 transition-transform shadow-sm">🏠</div>
+                    <h3 class="font-bold text-forest text-xl mb-3">Adoption Services</h3>
+                    <p class="text-sm text-charcoal/70 mb-6 leading-relaxed font-medium">Find your perfect companion from our curated list of pets waiting for homes.</p>
+                    <span class="text-xs font-bold text-blue-700 uppercase tracking-wide group-hover:underline">Browse Pets →</span>
+                </div>
+
+                <div class="card-premium p-8 cursor-pointer group" onclick="window.location.href='shop.html'">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mb-6 text-amber-600 border border-amber-100 group-hover:scale-110 transition-transform shadow-sm">🛒</div>
+                    <h3 class="font-bold text-forest text-xl mb-3">Premium Pet Shop</h3>
+                    <p class="text-sm text-charcoal/70 mb-6 leading-relaxed font-medium">Discover high-quality food, toys, and accessories curated by experts.</p>
+                    <span class="text-xs font-bold text-amber-700 uppercase tracking-wide group-hover:underline">Shop Now →</span>
+                </div>
+
+                <div class="card-premium p-8 cursor-pointer group" onclick="window.location.href='community.html'">
+                    <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center text-3xl mb-6 text-purple-600 border border-purple-100 group-hover:scale-110 transition-transform shadow-sm">👥</div>
+                    <h3 class="font-bold text-forest text-xl mb-3">Community Support</h3>
+                    <p class="text-sm text-charcoal/70 mb-6 leading-relaxed font-medium">Connect with fellow pet owners, share experiences, and get advice.</p>
+                    <span class="text-xs font-bold text-purple-700 uppercase tracking-wide group-hover:underline">Join Community →</span>
+                </div>
+
+                <div class="card-premium p-8 cursor-pointer group" onclick="window.location.href='emergency.html'">
+                    <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-3xl mb-6 text-red-600 border border-red-100 group-hover:scale-110 transition-transform shadow-sm">🚨</div>
+                    <h3 class="font-bold text-forest text-xl mb-3">Emergency Resources</h3>
+                    <p class="text-sm text-charcoal/70 mb-6 leading-relaxed font-medium">Quick access to emergency contacts, first aid guides, and 24/7 support.</p>
+                    <span class="text-xs font-bold text-red-700 uppercase tracking-wide group-hover:underline">Get Help →</span>
+                </div>
+
+                <div class="card-premium p-8 cursor-pointer group" onclick="window.location.href='health.html'">
+                    <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-3xl mb-6 text-teal-600 border border-teal-100 group-hover:scale-110 transition-transform shadow-sm">📞</div>
+                    <h3 class="font-bold text-forest text-xl mb-3">Expert Consultation</h3>
+                    <p class="text-sm text-charcoal/70 mb-6 leading-relaxed font-medium">Connect with certified veterinarians and behaviorists for professional advice.</p>
+                    <span class="text-xs font-bold text-teal-700 uppercase tracking-wide group-hover:underline">Book Now →</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-forest text-white relative overflow-hidden mt-12">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-forest via-forest to-kenya-green opacity-90"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10 animate-fade-in">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6 tracking-tight">Ready to Start Your Pet Care Journey?</h2>
+            <p class="text-white/80 text-lg mb-10 max-w-2xl mx-auto leading-relaxed font-medium">Join thousands of pet owners who trust us with their beloved companions' health and happiness.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-5">
+                <a href="adoption.html" class="bg-white text-forest px-10 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-block">
+                    Find Your Pet
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-forest text-white py-16 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-kenya-green to-kenya-red rounded-full flex items-center justify-center text-lg shadow-lg">🐾</div>
+                <span class="font-display text-2xl font-bold">Exotic Paws</span>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-8 mb-10 text-sm text-white/60 font-medium">
+                <a href="health.html" class="hover:text-white transition-colors">Health Management</a>
+                <a href="adoption.html" class="hover:text-white transition-colors">Pet Adoption</a>
+                <a href="shop.html" class="hover:text-white transition-colors">Pet Shop</a>
+                <a href="community.html" class="hover:text-white transition-colors">Community</a>
+            </div>
+            
+            <div class="flex justify-center space-x-6 mb-8 opacity-60">
+                <a href="#" class="hover:opacity-100 transition-opacity">🐦</a>
+                <a href="#" class="hover:opacity-100 transition-opacity">📘</a>
+                <a href="#" class="hover:opacity-100 transition-opacity">📸</a>
+            </div>
+            
+            <p class="text-white/30 text-xs tracking-widest uppercase">&copy; 2025 Exotic Paws and Claws. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="database.js"></script>
+    <script src="main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) { window.location.href = 'login.html'; return; }
+
+            // UI Hydration
+            document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
+            document.getElementById('hero-user-name').textContent = user.name.split(' ')[0];
+            document.getElementById('dropdown-name').textContent = user.name;
+            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+            // Dynamic Greeting
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById('dynamic-greeting');
+            if (hour < 12) greetingEl.textContent = 'Good Morning';
+            else if (hour < 18) greetingEl.textContent = 'Good Afternoon';
+            else greetingEl.textContent = 'Good Evening';
+
+            // Daily Tip
+            const tips = ["Hydration is key!", "Regular grooming builds bonds.", "Check paws for ticks.", "Brush teeth weekly."];
+            document.getElementById('daily-tip').innerText = `"${tips[Math.floor(Math.random() * tips.length)]}"`;
+
+            // Splide
+            new Splide('#hero-carousel', { type: 'loop', autoplay: true, interval: 4000, arrows: false, pagination: true }).mount();
+
+            // Dropdown
+            const menuBtn = document.getElementById('user-menu-btn');
+            const dropdown = document.getElementById('user-dropdown');
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', () => dropdown.classList.remove('active'));
+
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            });
+
+            // Load Pets
+            loadPets();
+
+            // Animations
+            anime({
+                targets: '.animate-fade-in',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                duration: 800,
+                delay: anime.stagger(100),
+                easing: 'easeOutExpo'
+            });
+        });
+
+        async function loadPets() {
+            const container = document.getElementById('pets-grid-content');
+            const addBtn = document.getElementById('add-another-btn');
+            
+            try {
+                const pets = await window.database.getPets();
+
+                if (pets.length === 0) {
+                    addBtn.classList.add('hidden');
+                    // NO PETS STATE - Custom Promo Card (Matches Screenshot exactly)
+                    container.innerHTML = `
+                        <div class="bg-white rounded-[1.5rem] shadow-lg border border-gray-200 p-8 lg:p-12 animate-fade-in">
+                            <div class="grid md:grid-cols-2 gap-10 items-center">
+                                <div>
+                                    <h2 class="font-display text-4xl font-bold text-forest mb-4">Add Your Pet</h2>
+                                    <p class="text-charcoal/70 mb-8 leading-relaxed font-medium">Register your beloved companion and start managing their health, appointments, and care all in one place.</p>
+                                    
+                                    <div class="space-y-4 mb-10">
+                                        <div class="flex items-center space-x-3 text-sm text-gray-600 font-medium">
+                                            <div class="w-5 h-5 bg-kenya-green rounded-full flex items-center justify-center text-white text-[10px]">✓</div>
+                                            <span>Track vaccinations and medical history</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3 text-sm text-gray-600 font-medium">
+                                            <div class="w-5 h-5 bg-kenya-green rounded-full flex items-center justify-center text-white text-[10px]">✓</div>
+                                            <span>Schedule appointments with veterinarians</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3 text-sm text-gray-600 font-medium">
+                                            <div class="w-5 h-5 bg-kenya-green rounded-full flex items-center justify-center text-white text-[10px]">✓</div>
+                                            <span>Monitor weight and health metrics</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3 text-sm text-gray-600 font-medium">
+                                            <div class="w-5 h-5 bg-kenya-green rounded-full flex items-center justify-center text-white text-[10px]">✓</div>
+                                            <span>Get personalized care reminders</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <a href="add-pet-enhanced.html" class="btn-shine px-8 py-4 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all uppercase tracking-wide text-sm inline-block">
+                                        Add Your Pet Now
+                                    </a>
+                                </div>
+                                
+                                <div class="hidden md:flex justify-center">
+                                    <div class="w-64 h-64 bg-deep-stone rounded-3xl flex items-center justify-center animate-float shadow-inner">
+                                        <div class="text-7xl text-gray-400/50 rotate-12">🐾</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    return;
+                }
+
+                // HAS PETS - Grid Layout
+                addBtn.classList.remove('hidden');
+                container.innerHTML = `
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${pets.map(pet => `
+                            <div class="card-premium p-6 flex items-start space-x-4 cursor-pointer group">
+                                <div class="w-20 h-20 bg-deep-stone/30 rounded-2xl flex items-center justify-center text-4xl shrink-0 group-hover:scale-110 transition-transform shadow-inner border border-gray-200">
+                                    ${getPetEmoji(pet.species)}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-display font-bold text-xl text-forest">${pet.name}</h3>
+                                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Active</span>
+                                    </div>
+                                    <p class="text-gray-500 text-sm mb-3 font-medium">${pet.breed || pet.species}</p>
+                                    <div class="flex space-x-4 text-xs font-bold text-gray-400 uppercase tracking-wide">
+                                        <span>${pet.age_years} Yrs</span>
+                                        <span>•</span>
+                                        <span>${pet.weight} kg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            } catch (err) { console.error(err); }
+        }
+
+        function getPetEmoji(species) {
+            const map = { 'Dog': '🐶', 'Cat': '🐱', 'Bird': '🦜', 'Rabbit': '🐰', 'Fish': '🐠' };
+            return map[species] || '🐾';
+        }
+    </script>
+</body>
+</html>
